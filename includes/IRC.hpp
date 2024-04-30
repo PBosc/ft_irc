@@ -24,12 +24,11 @@
 # include <sstream>
 # include <ctime>
 # include <cstdlib>
-# include "Client.hpp"
-# include "Channel.hpp"
 
 # define MAX_CONNECTIONS 1000
 
-extern t_data *g_data;
+class Client;
+class Channel;
 
 typedef struct s_epoll
 {
@@ -64,5 +63,7 @@ typedef struct 	s_data
 		std::vector<int>					operator_fds;
         std::map<std::string, Channel*>		channels;
 }				t_data;
+
+extern t_data *g_data;
 
 #endif

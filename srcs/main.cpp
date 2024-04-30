@@ -1,4 +1,6 @@
 #include "IRC.hpp"
+#include "Client.hpp"
+#include "Channel.hpp"
 
 t_data *g_data;
 
@@ -19,6 +21,7 @@ bool	init(int &port, t_data &data)
 		std::cerr << "Error: socket() failed" << std::endl;
 		return false;
 	}
+	data.clients = std::map<int, Client*>();
 	data.socket.addr = sockaddr_in();
 	data.socket.addr.sin_family = AF_INET;
 	data.socket.addr.sin_port = htons(port);
@@ -54,6 +57,33 @@ bool	init(int &port, t_data &data)
 	return true;
 }
 
+void parse_command(char *buf, t_command *command)
+{
+	std::string		str;
+	std::string		tmp;
+	std::stringstream	ss(buf);
+
+	command->has_last_param = false;
+	command->parameters.clear();
+	ss >> str;
+	if (str[0] == ':')
+	{
+		command->prefix = str.substr(1);
+		ss >> str;
+	}
+	command->command = str;
+	while (ss >> str)
+	{
+		if (str[0] == ':')
+		{
+			command->has_last_param = true;
+			command->last_param = str.substr(1);
+			break ;
+		}
+		command->parameters.push_back(str);
+	}
+}
+
 static void	user_connection(t_data &data)
 {
 	int					fd_new_con;
@@ -72,9 +102,6 @@ static void	user_connection(t_data &data)
 		std::cerr << "Error: accept() failed" << std::endl;
 		exit(EXIT_FAILURE);
 	}
-	new_client = new Client(client_id, fd_new_con);
-	data.clients.insert(std::make_pair<int, Client *>(fd_new_con, new_client));
-	data.open_fds.push_back(fd_new_con);
 	epoll_event_new_con.events = EPOLLIN | EPOLLRDHUP;
 	epoll_event_new_con.data.fd = fd_new_con;
 	fcntl(fd_new_con, F_SETFL, O_NONBLOCK);
@@ -100,7 +127,7 @@ static void	user_disconnection(t_data &data, int fd)
 	{
 		disc_user = data.clients.at(fd);
 	}
-	catch (out_of_range)
+	catch (std::out_of_range)
 	{
 		std::cerr << "Couldn't disconnect User with fd " << fd << ": no such user" << std::endl;
 		return ;
@@ -121,10 +148,52 @@ static void	user_disconnection(t_data &data, int fd)
 	std::cout << "User " << id_disc_user << " disconnected" << std::endl;
 }
 
+static void	user_command(int user_fd, t_data &data)
+{
+	Client	*user;
+	char	buf[4096];
+	int		ret;
+	t_command	command;
+
+	std::cout << "User " << user_fd << " is sending a command" << std::endl;
+	ret = recv(user_fd, buf, 4096, 0);
+	if (ret < 0)
+	{
+		std::cerr << "Error: recv() failed" << std::endl;
+		return ;
+	}
+	else if (ret == 0)
+	{
+		user_disconnection(data, user_fd);
+		return ;
+	}
+	buf[ret] = '\0';
+	parse_command(buf, &command);
+	if (user->get_id() == -1)
+	{
+		if (command.command == "PASS")
+			user->command_PASS(command);
+		else
+		{
+			std::cerr << "User " << user->get_fd() << " tried to send a command without PASS" << std::endl;
+			user->send_message("ERROR :You have not registered");
+		}
+	}
+	else
+	{
+		std::cout << "User " << user->get_fd() << " sent: " << buf << std::endl;
+		if (user->commands.find(command.command) != user->commands.end())
+			(user->*(user->commands[command.command]))(command);
+		else
+			user->command_unknown(command);
+	}
+	std::cout << "User " << user->get_fd() << " sent: " << buf << std::endl;
+}
 
 void	run_serv(t_data &data, int i)
 {
 	const int user_fd = find_user_fd(data.epoll.events[i].data.fd, data);
+	static int id = 0;
 
 	if (data.epoll.events[i].data.fd == data.socket.fd)
 		user_connection(data);
@@ -133,8 +202,13 @@ void	run_serv(t_data &data, int i)
 		|| (data.epoll.events[i].events & EPOLLRDHUP)
 		|| !(data.epoll.events[i].events & EPOLLIN))
 		user_disconnection(data, data.epoll.events[i].data.fd);
-	//else if (user_fd != -1 && data.clients[user_fd]->get_id() != -1)
-	//	user_command(user_fd, data);
+	if (data.clients.find(user_fd) == data.clients.end())
+	{
+		Client *user = new Client(id++, user_fd);
+		data.clients.insert(std::make_pair(user_fd, user));
+	}
+	if (user_fd != -1 && data.clients[user_fd]->get_id() != -1)
+		user_command(user_fd, data);
 } 
 
 int main(int ac, char **av)

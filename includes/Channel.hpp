@@ -21,6 +21,7 @@ class Channel
 		
 		void				add_user(int fd_user);
 		void				kick_user(int fd_to_kick);
+		void				part_user(int fd_user);
 
 		void				set_topic(std::string topic);
 		void				unset_topic();
