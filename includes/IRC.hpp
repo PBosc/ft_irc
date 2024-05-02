@@ -53,6 +53,7 @@ typedef struct s_command
 	bool				has_last_param;
 }						t_command;
 
-void	user_connection(void);
-void	user_disconnection(int &i);
+void					user_connection(void);
+void					user_disconnection(int &i);
+void					handle_message(int fd);
 #endif

@@ -14,6 +14,7 @@ class Client
 	bool _has_password, _has_nick, _has_Client, _is_identified, _is_operator;
 	std::vector<Channel *> _channels;
 	void init_commands(void);
+	std::string _message;
 
   public:
 	Client();
@@ -49,6 +50,8 @@ class Client
 	bool get_identification(void) const;
 	bool is_operator(void);
 	std::map<std::string, ScriptFunction> commands;
+	std::string &get_message(void);
+	void set_message(std::string &message);
 };
 
 #endif

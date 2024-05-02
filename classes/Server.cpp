@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/02 22:46:56 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/02 22:50:16 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	Server::run(int &i)
 		user_disconnection(i);
 		return ;
 	}
-	// handle_message(data, g_server.get_epoll().events[i].data.fd);
+	handle_message(g_server.get_epoll().events[i].data.fd);
 }
 
 bool Server::init(int port, std::string password)
