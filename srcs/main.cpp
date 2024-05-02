@@ -23,6 +23,7 @@ bool	init(int &port, t_data &data)
 		return (false);
 	}
 	data.clients = std::map<int, Client *>();
+	data.client_id = 0;
 	data.socket.addr = sockaddr_in();
 	data.socket.addr.sin_family = AF_INET;
 	data.socket.addr.sin_port = htons(port);

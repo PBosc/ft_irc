@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:01:15 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/02 15:21:10 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/02 19:15:10 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ void	user_connection(t_data &data)
 		exit(EXIT_FAILURE);
 	}
 	std::cout << "User connected with fd: " << fd_new_con << std::endl;
+	Client *client = new Client(fd_new_con, ++data.client_id);
+	data.clients[fd_new_con] = client;
 }
 
 void	user_disconnection(t_data &data, int i)
@@ -48,4 +50,6 @@ void	user_disconnection(t_data &data, int i)
 	epoll_ctl(data.epoll.fd, EPOLL_CTL_DEL, data.epoll.events[i].data.fd, &data.socket.event);
 	close(data.epoll.events[i].data.fd);
 	std::cout << "User with fd: " << data.epoll.events[i].data.fd << " disconnected" << std::endl;
+	delete data.clients[data.epoll.events[i].data.fd];
+	data.clients.erase(data.epoll.events[i].data.fd);
 }

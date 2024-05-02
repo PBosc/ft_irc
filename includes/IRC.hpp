@@ -59,10 +59,9 @@ typedef struct s_data
 	t_socket			socket;
 	int					port;
 	std::string password;
-	std::map<int, Client *> clients;
-	std::vector<int> open_fds;
-	std::vector<int> operator_fds;
 	std::map<std::string, Channel *> channels;
+	std::map<int, Client *> clients;
+	int					client_id;
 }						t_data;
 
 extern t_data			*g_data;
