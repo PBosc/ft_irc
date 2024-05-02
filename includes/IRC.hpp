@@ -1,34 +1,35 @@
 #ifndef IRC_HPP
 # define IRC_HPP
-# include <iostream>
-# include <string>
-# include <map>
-# include <list>
-# include <vector>
-# include <utility>
-# include <functional>
-# include <stdexcept>
 # include <algorithm>
-# include <errno.h>
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <netinet/in.h>
 # include <arpa/inet.h>
-# include <stdio.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include <string.h>
-# include <sys/epoll.h>
+# include <cstdlib>
+# include <ctime>
+# include <errno.h>
 # include <fcntl.h>
+# include <functional>
+# include <iostream>
+# include <list>
+# include <map>
+# include <netinet/in.h>
 # include <signal.h>
 # include <sstream>
-# include <ctime>
-# include <cstdlib>
+# include <stdexcept>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <string>
+# include <sys/epoll.h>
+# include <sys/socket.h>
+# include <sys/types.h>
+# include <unistd.h>
+# include <utility>
+# include <vector>
 
 # define MAX_CONNECTIONS 1000
+# define BUFFER_SIZE 4096
 
-class Client;
-class Channel;
+class					Client;
+class					Channel;
 
 typedef struct s_epoll
 {
@@ -41,29 +42,33 @@ typedef struct s_socket
 	int					fd;
 	epoll_event			event;
 	struct sockaddr_in	addr;
-}				t_socket;
+}						t_socket;
 
 typedef struct s_command
 {
-	std::string					prefix;
-	std::string					command;
-	std::vector<std::string>	parameters;
-	std::string					last_param;
-	bool						has_last_param;
-}				t_command;
+	std::string prefix;
+	std::string command;
+	std::vector<std::string> parameters;
+	std::string last_param;
+	bool				has_last_param;
+}						t_command;
 
-typedef struct 	s_data
+typedef struct s_data
 {
-        t_epoll								epoll;
-        t_socket							socket;
-        int									port;
-        std::string							password;
-        std::map<int, Client*>				clients;
-        std::vector<int>					open_fds;
-		std::vector<int>					operator_fds;
-        std::map<std::string, Channel*>		channels;
-}				t_data;
+	t_epoll				epoll;
+	t_socket			socket;
+	int					port;
+	std::string password;
+	std::map<int, Client *> clients;
+	std::vector<int> open_fds;
+	std::vector<int> operator_fds;
+	std::map<std::string, Channel *> channels;
+}						t_data;
 
-extern t_data *g_data;
+extern t_data			*g_data;
 
+void					run_serv(t_data &data, int i);
+void					user_connection(t_data &data);
+void					user_disconnection(t_data &data, int i);
+void					handle_message(t_data &data, int fd);
 #endif

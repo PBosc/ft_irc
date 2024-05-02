@@ -6,7 +6,7 @@
 #    By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/13 22:58:31 by wouhliss          #+#    #+#              #
-#    Updated: 2024/05/02 14:37:03 by wouhliss         ###   ########.fr        #
+#    Updated: 2024/05/02 16:00:44 by wouhliss         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,10 @@ RM = rm
 RM_FLAGS = -rf
 
 SRCS_PATH = ./srcs/
-SRCS = ${SRCS_PATH}main.cpp
+SRCS = 	${SRCS_PATH}main.cpp \
+		${SRCS_PATH}connection.cpp \
+		${SRCS_PATH}server.cpp \
+		${SRCS_PATH}message.cpp
 
 CLASS_PATH = ./classes/
 CLASS = $(CLASS_PATH)Channel.cpp \
