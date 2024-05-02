@@ -123,15 +123,6 @@ bool Client::is_operator(void) {
     return _is_operator;
 }
 
-Client *Client::getClient(std::string nick, t_data &server) {
-    for (std::map<int, Client *>::iterator it = server.clients.begin(); it != server.clients.end(); it++) {
-        if (it->second->get_nick() == nick) {
-            return it->second;
-        }
-    }
-    return NULL;
-}
-
 std::ostream &operator<<(std::ostream &os, const Client &client) {
     os << "Client " << client.get_id() << " (" << client.get_nick() << ")" << "writing to fd " << client.get_fd() << std::endl;
     return os;
@@ -241,14 +232,6 @@ int Client::command_PRIVMSG(t_command &command) {
         }
         std::string message = "PRIVMSG " + command.parameters[0] + " :" + command.parameters[1];
         channel->broadcast(message, _fd);
-    } else {
-        Client *client = Client::getClient(command.parameters[0], g_data);
-        if (client == NULL) {
-            send_message("ERROR :No such client " + command.parameters[0]);
-            return 0;
-        }
-        std::string message = "PRIVMSG " + command.parameters[0] + " :" + command.parameters[1];
-        client->send_message(message);
     }
     return 0;
 }
@@ -298,12 +281,6 @@ int Client::command_KICK(t_command &command) {
         send_message("ERROR :You are not in channel " + command.parameters[0]);
         return 0;
     }
-    Client *client = Client::getClient(command.parameters[1], g_data);
-    if (client == NULL) {
-        send_message("ERROR :No such client " + command.parameters[1]);
-        return 0;
-    }
-    channel->kick_user(client->get_fd());
     return 0;
 }
 
@@ -316,12 +293,6 @@ int Client::command_KILL(t_command &command) {
         send_message("ERROR :You are not an operator");
         return 0;
     }
-    Client *client = Client::getClient(command.parameters[0], g_data);
-    if (client == NULL) {
-        send_message("ERROR :No such client " + command.parameters[0]);
-        return 0;
-    }
-    client->send_message("ERROR :Closing connection: " + command.parameters[1]);
     return 0;
 }
 

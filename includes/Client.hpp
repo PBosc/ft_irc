@@ -42,7 +42,6 @@ class Client
 	int command_unknown(t_command &command);
 
 	bool remove_channel(std::string channel_name);
-	static Client *getClient(std::string nick, t_data &server);
 	int get_id(void) const;
 	int get_fd(void) const;
 	std::string get_nick(void) const;

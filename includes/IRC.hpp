@@ -53,5 +53,6 @@ typedef struct s_command
 	bool				has_last_param;
 }						t_command;
 
-extern Server g_server;
+void	user_connection(void);
+void	user_disconnection(int &i);
 #endif

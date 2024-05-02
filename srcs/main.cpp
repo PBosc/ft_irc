@@ -12,6 +12,14 @@ void	handle_quit(int sig)
 	end = true;
 }
 
+void __attribute__((destructor)) on_exit(void)
+{
+	if (g_server.get_socket().fd > 0)
+		close(g_server.get_socket().fd);
+	if (g_server.get_epoll().fd > 0)
+		close(g_server.get_epoll().fd);
+}
+
 int	main(int ac, char **av)
 {
 	int				epoll_fds;
@@ -21,7 +29,7 @@ int	main(int ac, char **av)
 		std::cerr << "Usage: ./ft_irc <port> <password>" << std::endl;
 		return (84);
 	}
-	if (!g_server.init(atoi(av[1]), av[2]))
+	if (!g_server.init(std::atoi(av[1]), std::string(av[2])))
 		return (84);
 	std::cout << "Port: " << g_server.get_port() << std::endl << "Password: " << g_server.get_password() << std::endl << "Server starting..." << std::endl;
 	signal(SIGINT, handle_quit);
@@ -35,7 +43,7 @@ int	main(int ac, char **av)
 			return (EXIT_FAILURE);
 		}
 		for (int i = 0; i < epoll_fds; i++)
-			run_serv(i);
+			g_server.run(i);
 	}
 	return (0);
 }

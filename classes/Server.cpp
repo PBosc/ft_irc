@@ -6,17 +6,18 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/02 22:14:16 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/02 22:46:56 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "Client.hpp"
 
 void	Server::run(int &i)
 {
 	if (g_server.get_epoll().events[i].data.fd == g_server.get_socket().fd)
 	{
-		user_connection(data);
+		user_connection();
 		return ;
 	}
 	if ((g_server.get_epoll().events[i].events & EPOLLERR)
@@ -24,13 +25,13 @@ void	Server::run(int &i)
 		|| (g_server.get_epoll().events[i].events & EPOLLRDHUP)
 		|| !(g_server.get_epoll().events[i].events & EPOLLIN))
 	{
-		user_disconnection(data, i);
+		user_disconnection(i);
 		return ;
 	}
 	// handle_message(data, g_server.get_epoll().events[i].data.fd);
 }
 
-bool Server::init(int &port, std::string &password)
+bool Server::init(int port, std::string password)
 {
 	int	sock_opt_val;
 
@@ -81,63 +82,95 @@ bool Server::init(int &port, std::string &password)
 	return (true);
 }
 
+Server::Server(void)
+{
+	_socket.fd = -1;
+	_epoll.fd = -1;
+}
+
 Server::~Server(void)
 {
 	std::map<int, Client *>::iterator it;
 	for (it = _clients.begin(); it != _clients.end(); it++)
+	{
+		close (it->second->get_fd());
 		delete it->second;
+	}
 }
 
-t_epoll &Server::get_epoll(void) const
+t_epoll &Server::get_epoll(void)
 {
+	return (_epoll);
 }
 
 void Server::set_epoll(t_epoll &epoll)
 {
+	_epoll = epoll;
 }
 
-t_socket &Server::get_socket(void) const
+t_socket &Server::get_socket(void)
 {
+	return (_socket);
 }
 
 void Server::set_socket(t_socket &socket)
 {
+	_socket = socket;
 }
 
-int &Server::get_port(void) const
+int &Server::get_port(void)
 {
+	return (_port);
 }
 
 void Server::set_port(int &port)
 {
+	_port = port;
 }
 
-std::string &Server::get_password(void) const
+std::string &Server::get_password(void)
 {
+	return (_password);
 }
 
 void Server::set_password(std::string &string)
 {
+	_password = string;
 }
 
-std::map<std::string, Channel *> &Server::get_channels(void) const
+std::map<std::string, Channel *> &Server::get_channels(void)
 {
+	return (_channels);
 }
 
 void Server::set_channel(std::string &channel_name, Channel *channel)
 {
+	_channels[channel_name] = channel;
 }
 
-std::map<int, Client *> &Server::get_clients(void) const
+std::map<int, Client *> &Server::get_clients(void)
 {
+	return (_clients);
 }
 
 void Server::set_client(int &fd, Client *client)
 {
+	_clients[fd] = client;
 }
-int &Server::get_clients_id(void) const
+
+int &Server::get_clients_id(void)
 {
+	return (_clients_id);
 }
+
 void Server::set_clients_id(int &clients_id)
 {
+	_clients_id = clients_id;
+}
+
+std::ostream &operator<<(std::ostream &os, Server &server)
+{
+	os << "Server port: " << server.get_port() << std::endl;
+	os << "Server password: " << server.get_password() << std::endl;
+	return os;
 }

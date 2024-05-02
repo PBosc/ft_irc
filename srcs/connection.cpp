@@ -6,15 +6,16 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:01:15 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/02 21:29:30 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/02 22:39:13 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "IRC.hpp"
+#include "Server.hpp"
 
-void	user_connection(t_data &data)
+void	user_connection(void)
 {
 	int					fd_new_con;
 	struct sockaddr_in	socket_new_con;
@@ -24,7 +25,7 @@ void	user_connection(t_data &data)
 	size_socket_new_con = sizeof(socket_new_con);
 	socket_new_con = sockaddr_in();
 	epoll_event_new_con = epoll_event();
-	fd_new_con = accept(data.socket.fd, (struct sockaddr *)&socket_new_con,
+	fd_new_con = accept(g_server.get_socket().fd, (struct sockaddr *)&socket_new_con,
 			&size_socket_new_con);
 	if (fd_new_con < 0)
 	{
@@ -34,22 +35,22 @@ void	user_connection(t_data &data)
 	epoll_event_new_con.events = EPOLLIN | EPOLLRDHUP;
 	epoll_event_new_con.data.fd = fd_new_con;
 	fcntl(fd_new_con, F_SETFL, O_NONBLOCK);
-	if (epoll_ctl(data.epoll.fd, EPOLL_CTL_ADD, fd_new_con,
+	if (epoll_ctl(g_server.get_epoll().fd, EPOLL_CTL_ADD, fd_new_con,
 			&epoll_event_new_con) < 0)
 	{
 		std::cerr << "Error: epoll_ctl() failed" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	std::cout << "User connected with fd: " << fd_new_con << std::endl;
-	Client *client = new Client(fd_new_con, ++data.client_id);
-	data.clients[fd_new_con] = client;
+	Client *client = new Client(fd_new_con, ++g_server.get_clients_id());
+	g_server.get_clients()[fd_new_con] = client;
 }
 
-void	user_disconnection(t_data &data, int i)
+void	user_disconnection(int &i)
 {
-	epoll_ctl(data.epoll.fd, EPOLL_CTL_DEL, data.epoll.events[i].data.fd, &data.socket.event);
-	close(data.epoll.events[i].data.fd);
-	std::cout << "User with fd: " << data.epoll.events[i].data.fd << " disconnected" << std::endl;
-	delete data.clients[data.epoll.events[i].data.fd];
-	data.clients.erase(data.epoll.events[i].data.fd);
+	epoll_ctl(g_server.get_epoll().fd, EPOLL_CTL_DEL, g_server.get_epoll().events[i].data.fd, &g_server.get_socket().event);
+	close(g_server.get_epoll().events[i].data.fd);
+	std::cout << "User with fd: " << g_server.get_epoll().events[i].data.fd << " disconnected" << std::endl;
+	delete g_server.get_clients()[g_server.get_epoll().events[i].data.fd];
+	g_server.get_clients().erase(g_server.get_epoll().events[i].data.fd);
 }
