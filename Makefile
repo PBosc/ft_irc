@@ -6,7 +6,7 @@
 #    By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/13 22:58:31 by wouhliss          #+#    #+#              #
-#    Updated: 2024/05/02 22:14:04 by wouhliss         ###   ########.fr        #
+#    Updated: 2024/05/02 23:07:01 by wouhliss         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,8 @@ CLASS = $(CLASS_PATH)Channel.cpp \
 OBJS = 	${SRCS:.cpp=.o} \
 		${CLASS:.cpp=.o}
 
-DEPS = ${SRCS:.cpp=.d}
+DEPS = 	${SRCS:.cpp=.d} \
+		${CLASS:.cpp=.d}
 
 NAME = ft_irc
 
@@ -42,7 +43,8 @@ ${NAME}: ${OBJS}
 	${CPP} ${CPP_FLAGS} ${OBJS} -o ${NAME}
 
 clean:
-	${RM} ${RM_FLAGS} ${OBJS} ${DEPS}
+	${RM} ${RM_FLAGS} ${OBJS}
+	${RM} ${RM_FLAGS} ${DEPS}
 
 fclean: clean
 	${RM} ${RM_FLAGS} ${NAME}
