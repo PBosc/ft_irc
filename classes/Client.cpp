@@ -123,8 +123,8 @@ bool Client::is_operator(void) {
     return _is_operator;
 }
 
-Client *Client::getClient(std::string nick, t_data *server) {
-    for (std::map<int, Client *>::iterator it = server->clients.begin(); it != server->clients.end(); it++) {
+Client *Client::getClient(std::string nick, t_data &server) {
+    for (std::map<int, Client *>::iterator it = server.clients.begin(); it != server.clients.end(); it++) {
         if (it->second->get_nick() == nick) {
             return it->second;
         }

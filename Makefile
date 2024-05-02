@@ -6,25 +6,25 @@
 #    By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/13 22:58:31 by wouhliss          #+#    #+#              #
-#    Updated: 2024/05/02 16:00:44 by wouhliss         ###   ########.fr        #
+#    Updated: 2024/05/02 22:14:04 by wouhliss         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CPP = c++
 INCLUDE_PATH = ./includes
-CPP_FLAGS = -Wall -Wextra -Werror -MMD -MP -std=c++98 -I $(INCLUDE_PATH)
+CPP_FLAGS = -Wall -Wextra -Werror -MMD -MP -std=c++98 -g3 -I $(INCLUDE_PATH)
 RM = rm
 RM_FLAGS = -rf
 
 SRCS_PATH = ./srcs/
 SRCS = 	${SRCS_PATH}main.cpp \
 		${SRCS_PATH}connection.cpp \
-		${SRCS_PATH}server.cpp \
 		${SRCS_PATH}message.cpp
 
 CLASS_PATH = ./classes/
 CLASS = $(CLASS_PATH)Channel.cpp \
-		$(CLASS_PATH)Client.cpp
+		$(CLASS_PATH)Client.cpp \
+		$(CLASS_PATH)Server.cpp
 
 OBJS = 	${SRCS:.cpp=.o} \
 		${CLASS:.cpp=.o}

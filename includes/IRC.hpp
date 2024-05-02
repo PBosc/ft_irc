@@ -53,21 +53,5 @@ typedef struct s_command
 	bool				has_last_param;
 }						t_command;
 
-typedef struct s_data
-{
-	t_epoll				epoll;
-	t_socket			socket;
-	int					port;
-	std::string password;
-	std::map<std::string, Channel *> channels;
-	std::map<int, Client *> clients;
-	int					client_id;
-}						t_data;
-
-extern t_data			*g_data;
-
-void					run_serv(t_data &data, int i);
-void					user_connection(t_data &data);
-void					user_disconnection(t_data &data, int i);
-void					handle_message(t_data &data, int fd);
+extern Server g_server;
 #endif
