@@ -1,0 +1,4 @@
+*.d
+*.o
+ft_irc
+.vscode

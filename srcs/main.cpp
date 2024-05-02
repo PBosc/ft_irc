@@ -90,7 +90,6 @@ static void	user_connection(t_data &data)
 	struct	sockaddr_in socket_new_con;
 	struct	epoll_event epoll_event_new_con;
 	socklen_t			size_socket_new_con;
-	Client				*new_client;
 	static int			client_id = 1;
 
 	size_socket_new_con = sizeof(socket_new_con);
@@ -148,15 +147,14 @@ static void	user_disconnection(t_data &data, int fd)
 	std::cout << "User " << id_disc_user << " disconnected" << std::endl;
 }
 
-static void	user_command(int user_fd, t_data &data)
+static void	user_command(Client *user, t_data &data)
 {
-	Client	*user;
 	char	buf[4096];
 	int		ret;
 	t_command	command;
 
-	std::cout << "User " << user_fd << " is sending a command" << std::endl;
-	ret = recv(user_fd, buf, 4096, 0);
+	std::cout << "User " << user->get_fd() << " is sending a command" << std::endl;
+	ret = recv(user->get_fd(), buf, 4096, 0);
 	if (ret < 0)
 	{
 		std::cerr << "Error: recv() failed" << std::endl;
@@ -164,7 +162,7 @@ static void	user_command(int user_fd, t_data &data)
 	}
 	else if (ret == 0)
 	{
-		user_disconnection(data, user_fd);
+		user_disconnection(data, user->get_fd());
 		return ;
 	}
 	buf[ret] = '\0';
@@ -208,7 +206,7 @@ void	run_serv(t_data &data, int i)
 		data.clients.insert(std::make_pair(user_fd, user));
 	}
 	if (user_fd != -1 && data.clients[user_fd]->get_id() != -1)
-		user_command(user_fd, data);
+		user_command(data.clients[user_fd], data);
 } 
 
 int main(int ac, char **av)
@@ -220,7 +218,7 @@ int main(int ac, char **av)
 		std::cerr << "Usage: ./ft_irc <port> <password>" << std::endl;
 		return 84;
 	}
-	data.port = std::stoi(av[1]);
+	data.port = std::atoi(av[1]);
 	data.password = av[2];
 	if (!init(data.port, data))
 		return 84;

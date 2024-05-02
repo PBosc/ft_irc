@@ -1,6 +1,27 @@
 #include "Client.hpp"
 #include "Channel.hpp"
 
+void  Client::init_commands(void)
+{
+    commands["PASS"] = &Client::command_PASS;
+    commands["NICK"] = &Client::command_NICK;
+    commands["USER"] = &Client::command_USER;
+    commands["PING"] = &Client::command_PING;
+    commands["JOIN"] = &Client::command_JOIN;
+    commands["NAMES"] = &Client::command_NAMES;
+    commands["PRIVMSG"] = &Client::command_PRIVMSG;
+    commands["QUIT"] = &Client::command_QUIT;
+    commands["PART"] = &Client::command_PART;
+    commands["KICK"] = &Client::command_KICK;
+    commands["KILL"] = &Client::command_KILL;
+    commands["OPER"] = &Client::command_OPER;
+    commands["MODE"] = &Client::command_MODE;
+    commands["TOPIC"] = &Client::command_TOPIC;
+    commands["NOTICE"] = &Client::command_NOTICE;
+    commands["INVITE"] = &Client::command_INVITE;
+    commands["UNKNOWN"] = &Client::command_unknown;
+}
+
 Client::Client() {
     _id = -1;
     _fd = -1;
@@ -12,6 +33,7 @@ Client::Client() {
     _has_Client = false;
     _is_identified = false;
     _channels = std::vector<Channel *>();
+    init_commands();
 }
 
 Client::Client(int fd, int id) {
@@ -25,6 +47,7 @@ Client::Client(int fd, int id) {
     _has_Client = false;
     _is_identified = false;
     _channels = std::vector<Channel *>();
+    init_commands();
 }
 
 Client::Client(const Client &obj) {
@@ -38,6 +61,7 @@ Client::Client(const Client &obj) {
     _has_Client = obj._has_Client;
     _is_identified = obj._is_identified;
     _channels = obj._channels;
+    commands = obj.commands;
 }
 
 Client &Client::operator=(const Client &rhs) {
@@ -191,9 +215,10 @@ int Client::command_NAMES(t_command &command) {
         return 0;
     }
     std::string names = "NAMES " + command.parameters[0] + " :";
-    for (std::vector<int>::iterator it = channel->get_users().begin(); it != channel->get_users().end(); it++) {
-        int client_fd = *it;
-        Client *client = g_data->clients[client_fd];
+    for (std::size_t i = 0; i < channel->get_users().size(); ++i)
+    {
+        // int client_fd = channel->get_users().at(i);
+        // Client *client = g_data->clients[client_fd];
     }
     send_message(names);
     return 0;
@@ -319,6 +344,7 @@ int Client::command_OPER(t_command &command) {
 }
 
 int Client::command_MODE(t_command &command) {
+    (void)command;
     send_message("ERROR :MODE command not implemented");
     return 0;
 }
@@ -346,11 +372,13 @@ int Client::command_TOPIC(t_command &command) {
 }
 
 int Client::command_NOTICE(t_command &command) {
+    (void)command;
     send_message("ERROR :NOTICE command not implemented");
     return 0;
 }
 
 int Client::command_INVITE(t_command &command) {
+    (void)command;
     send_message("ERROR :INVITE command not implemented");
     return 0;
 }

@@ -128,9 +128,8 @@ Channel *Channel::getChannel(std::string name) {
 std::ostream& operator<< (std::ostream &out, const Channel &channel) {
     out << "Channel " << channel.get_name() << ":\n";
     out << "Users:\n";
-    for (std::vector<int>::const_iterator it = channel.get_users().begin(); it != channel.get_users().end(); it++) {
-        out << *it << std::endl;
-    }
+    for (std::size_t i = 0; i < channel.get_users().size(); ++i)
+        out << channel.get_users().at(i);
     out << "Topic: " << channel.get_topic() << std::endl;
     out << "Topic set: " << channel.get_topic_set() << std::endl;
     out << "Key: " << channel.get_key() << std::endl;
