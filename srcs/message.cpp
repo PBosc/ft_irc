@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/02 23:05:25 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/02 23:10:44 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,13 @@ void	handle_message(int fd)
 				closed = true;
 			}
 			std::stringstream ss(client->get_message());
-			std::getline(ss, line);
-			if (line.size() == client->get_message().size())
-				break ;
-			std::cout << "User " << fd << " sent: " << line << std::endl;
-			client->get_message().erase(0, line.size() + 1);
+			while (std::getline(ss, line))
+			{
+				if (line.size() == client->get_message().size())
+					break ;
+				std::cout << "User " << fd << " sent: " << line << std::endl;
+				client->get_message().erase(0, line.size() + 1);
+			}
 			break ;
 		}
 		buf[rc] = 0;
