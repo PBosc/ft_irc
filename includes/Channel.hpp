@@ -36,7 +36,6 @@ class Channel
 		unsigned int		get_user_limit(void) const;
 
 		void				broadcast(std::string message, int emitter);
-		static Channel *	getChannel(std::string name);
 };
 
 #endif

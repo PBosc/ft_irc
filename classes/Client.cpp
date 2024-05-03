@@ -1,5 +1,6 @@
 #include "Channel.hpp"
 #include "Client.hpp"
+#include "Server.hpp"
 
 void Client::init_commands(void)
 {
@@ -96,7 +97,7 @@ Client::~Client()
 
 bool Client::send_message(const std::string &message)
 {
-	return (send(_fd, message.c_str(), message.length(), 0) != -1);
+	return (send(g_server.get_epoll().events->data.fd, message.c_str(), message.length(), 0) != -1);
 }
 
 bool Client::remove_channel(std::string channel_name)
@@ -224,12 +225,12 @@ int Client::command_JOIN(t_command &command)
 		send_message("ERROR :You have not registered");
 		return (0);
 	}
-	channel = Channel::getChannel(command.parameters[0]);
-	if (channel == NULL)
-	{
-		channel = new Channel(command.parameters[0], _fd);
-		_channels.push_back(channel);
-	}
+    if (g_server.get_channels().find(command.parameters[0]) == g_server.get_channels().end())
+    {
+        g_server.get_channels()[command.parameters[0]] = new Channel(command.parameters[0], _fd);
+    }
+    channel = g_server.get_channels()[command.parameters[0]];   
+    _channels.push_back(channel);
 	if (channel->is_user(_fd))
 	{
 		send_message("ERROR :You are already in channel "
@@ -255,12 +256,13 @@ int Client::command_NAMES(t_command &command)
 		send_message("ERROR :No channel given");
 		return (0);
 	}
-	channel = Channel::getChannel(command.parameters[0]);
-	if (channel == NULL)
+    if (g_server.get_channels().find(command.parameters[0]) != g_server.get_channels().end())
+        channel = g_server.get_channels()[command.parameters[0]];
+    else
 	{
-		send_message("ERROR :No such channel " + command.parameters[0]);
+    	send_message("ERROR :No such channel " + command.parameters[0]);
 		return (0);
-	}
+    }
 	std::string names = "NAMES " + command.parameters[0] + " :";
 	for (std::size_t i = 0; i < channel->get_users().size(); ++i)
 	{
@@ -282,8 +284,9 @@ int Client::command_PRIVMSG(t_command &command)
 	}
 	if (command.parameters[0][0] == '#')
 	{
-		channel = Channel::getChannel(command.parameters[0]);
-		if (channel == NULL)
+        if (g_server.get_channels().find(command.parameters[0]) != g_server.get_channels().end())
+            channel = g_server.get_channels()[command.parameters[0]];
+		else
 		{
 			send_message("ERROR :No such channel " + command.parameters[0]);
 			return (0);
@@ -321,8 +324,9 @@ int Client::command_PART(t_command &command)
 		send_message("ERROR :No channel given");
 		return 0;
 	}
-	channel = Channel::getChannel(command.parameters[0]);
-	if (channel == NULL)
+    if (g_server.get_channels().find(command.parameters[0]) != g_server.get_channels().end())
+        channel = g_server.get_channels()[command.parameters[0]];
+	else
 	{
 		send_message("ERROR :No such channel " + command.parameters[0]);
 		return 0;
@@ -350,8 +354,9 @@ int Client::command_KICK(t_command &command)
 		send_message("ERROR :You are not an operator");
 		return 0;
 	}
-	channel = Channel::getChannel(command.parameters[0]);
-	if (channel == NULL)
+    if (g_server.get_channels().find(command.parameters[0]) != g_server.get_channels().end())
+        channel = g_server.get_channels()[command.parameters[0]];
+	else
 	{
 		send_message("ERROR :No such channel " + command.parameters[0]);
 		return 0;
@@ -417,8 +422,9 @@ int Client::command_TOPIC(t_command &command)
 		send_message("ERROR :No channel given");
 		return 0;
 	}
-	channel = Channel::getChannel(command.parameters[0]);
-	if (channel == NULL)
+    if (g_server.get_channels().find(command.parameters[0]) != g_server.get_channels().end())
+        channel = g_server.get_channels()[command.parameters[0]];
+	else
 	{
 		send_message("ERROR :No such channel " + command.parameters[0]);
 		return 0;

@@ -112,19 +112,6 @@ void Channel::broadcast(std::string message, int emitter) {
     }
 }
 
-Channel *Channel::getChannel(std::string name) {
-    static std::vector<Channel *> channels = std::vector<Channel *>();
-
-    for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); it++) {
-        if ((*it)->get_name() == name) {
-            return *it;
-        }
-    }
-    Channel *new_channel = new Channel(name, 0);
-    channels.push_back(new_channel);
-    return new_channel;
-}
-
 std::ostream& operator<< (std::ostream &out, const Channel &channel) {
     out << "Channel " << channel.get_name() << ":\n";
     out << "Users:\n";

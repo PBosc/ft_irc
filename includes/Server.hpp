@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:40:32 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/02 22:46:41 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/02 23:21:13 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,5 +47,6 @@ class Server
 
 
 };
+std::ostream &operator<<(std::ostream &os, Server &server);
 extern Server	g_server;
 #endif

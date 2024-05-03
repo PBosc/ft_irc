@@ -31,7 +31,7 @@ int	main(int ac, char **av)
 	}
 	if (!g_server.init(std::atoi(av[1]), std::string(av[2])))
 		return (84);
-	std::cout << "Port: " << g_server.get_port() << std::endl << "Password: " << g_server.get_password() << std::endl << "Server starting..." << std::endl;
+	std::cout << g_server << std::endl;
 	signal(SIGINT, handle_quit);
 	while (!end)
 	{
