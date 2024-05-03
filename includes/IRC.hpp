@@ -26,7 +26,7 @@
 # include <utility>
 # include <vector>
 
-# define MAX_CONNECTIONS 5000
+# define MAX_CONNECTIONS 10
 # define BUFFER_SIZE 4096
 
 class					Client;

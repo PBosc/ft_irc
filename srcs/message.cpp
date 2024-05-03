@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/03 17:34:05 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/04 01:11:18 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	handle_message(int fd)
 	while (true)
 	{
 		rc = recv(fd, buf, BUFFER_SIZE, 0);
-		if (rc < 0)
+		if (rc <= 0)
 		{
 			if (errno != EWOULDBLOCK)
 			{

@@ -66,7 +66,15 @@ bool Client::can_execute(void) const
 
 bool Client::send_message(const std::string &message)
 {
-	return (send(_fd, (message + "\n").c_str(), message.length() + 1, 0) != -1);
+	int		rc;
+	try {
+		rc = send(_fd, (message + "\n").c_str(), message.length() + 1, 0);
+		return (true);
+	}
+	catch (std::exception &e) {
+		std::cerr << "Error: send() failed: " << e.what() << std::endl;
+		return (false);
+	}
 }
 
 bool Client::remove_channel(std::string channel_name)
@@ -275,7 +283,7 @@ int Client::command_JOIN(t_command &command)
 {
 	Channel	*channel;
 
-	if (!_has_password || !_has_Client || !_has_nick)
+	if (!this->can_execute())
 	{
 		send_message("ERROR :You must set your password, nick and user before joining a channel");
 		return (0);
