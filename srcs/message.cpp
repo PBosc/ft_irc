@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/03 04:14:29 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/03 11:21:10 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,54 +14,6 @@
 #include "Client.hpp"
 #include "IRC.hpp"
 #include "Server.hpp"
-
-std::ostream& operator<<(std::ostream &out, t_command &cmd)
-{
-    out << "Le prefixe est " 
-		<< cmd.prefix 
-		<< ", la commande est " 
-		<< cmd.command
-		<< ", les parametres sont ";
-	for (std::vector<std::string>::iterator it = cmd.parameters.begin(); it != cmd.parameters.end(); it++) {
-		out << *it << " ";
-	}
-	out << "et le suffixe est "
-		<< cmd.suffix;
-    return (out);
-}
-
-
-
-bool format_command(std::string line, t_command &cmd) {
-	std::stringstream ss(line);
-	std::vector<std::string> all;
-	std::string tmp;
-	
-	while (ss >> tmp) {
-		// std::cout << "From stream is " << tmp << std::endl;
-		all.push_back(tmp);
-	}
-	if (all.size() < 1)
-		return false;
-	std::vector<std::string>::iterator it = all.begin();
-	if ((*it)[0] == ':') {
-		(*it).erase(0, 1);	
-		cmd.prefix = *(it++);
-	}
-	else
-		cmd.prefix = "";
-	if (it == all.end())
-		return false;
-	cmd.command = *(it++);
-	while (it != all.end() && (*it)[0] != ':')
-		cmd.parameters.push_back(*(it++));
-	cmd.suffix = "";
-	while (it != all.end())
-		cmd.suffix += *(it++) + " ";
-	if (cmd.suffix != "")
-		cmd.suffix.erase(0, 1);
-	return true;
-}
 
 void	handle_message(int fd)
 {
@@ -90,15 +42,26 @@ void	handle_message(int fd)
 				t_command cmd;
 				if (line.size() == client->get_message().size())
 					break ;
-				if (!format_command(line, cmd)) {
-					std::cout << "Failure" << std::endl;
-					// todo error handling if command is not correct format 
+				std::cout << "Command: " << line << std::endl;
+				std::stringstream	stream(line);
+				stream >> cmd.command;
+				std::string param;
+				while (stream >> param)
+				{
+					if (param.size() && param.at(0) == ':')
+					{
+						param.erase(0, 1);
+						cmd.suffix = param;
+						while (stream >> param)
+							cmd.suffix.append(" " + param);
+						break ;
+					}
+					cmd.parameters.push_back(param);
 				}
 				if (g_server.get_commands().find(cmd.command) != g_server.get_commands().end())
 					(client->*g_server.get_commands()[cmd.command])(cmd);
 				else
 					(client->*g_server.get_commands()["UNKNOWN"])(cmd);
-				std::cout << cmd << std::endl;
 				client->get_message().erase(0, line.size() + 1);
 			}
 			break ;

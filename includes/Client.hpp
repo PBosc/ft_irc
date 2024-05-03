@@ -10,8 +10,6 @@ class Client
 	int _id, _fd;
 	std::string _nick, _user, _name;
 	bool _has_password, _has_nick, _has_Client, _is_identified, _is_operator;
-	std::vector<Channel *> _channels;
-	void init_commands(void);
 	std::string _message;
 
   public:
@@ -19,7 +17,6 @@ class Client
 	Client(int fd, int id);
 	Client(const Client &obj);
 	Client &operator=(const Client &rhs);
-	~Client();
 	bool send_message(const std::string &message);
 	int command_CAP(t_command &command);
 	int command_PASS(t_command &command);

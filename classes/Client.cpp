@@ -14,7 +14,6 @@ Client::Client()
 	_has_nick = false;
 	_has_Client = false;
 	_is_identified = false;
-	_channels = std::vector<Channel *>();
 	_message = "";
 }
 
@@ -29,7 +28,6 @@ Client::Client(int fd, int id)
 	_has_nick = false;
 	_has_Client = false;
 	_is_identified = false;
-	_channels = std::vector<Channel *>();
 	_message = "";
 }
 
@@ -44,7 +42,6 @@ Client::Client(const Client &obj)
 	_has_nick = obj._has_nick;
 	_has_Client = obj._has_Client;
 	_is_identified = obj._is_identified;
-	_channels = obj._channels;
 	_message = obj._message;
 }
 
@@ -59,17 +56,8 @@ Client &Client::operator=(const Client &rhs)
 	_has_nick = rhs._has_nick;
 	_has_Client = rhs._has_Client;
 	_is_identified = rhs._is_identified;
-	_channels = rhs._channels;
 	_message = rhs._message;
 	return (*this);
-}
-
-Client::~Client()
-{
-	for (std::vector<Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
-	{
-		delete *it;
-	}
 }
 
 bool Client::send_message(const std::string &message)
@@ -79,11 +67,11 @@ bool Client::send_message(const std::string &message)
 
 bool Client::remove_channel(std::string channel_name)
 {
-	for (std::vector<Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
+	for (std::map<std::string, Channel *>::iterator it = g_server.get_channels().begin(); it != g_server.get_channels().end(); it++)
 	{
-		if ((*it)->get_name() == channel_name)
+		if ((*it).second->is_user(_fd))
 		{
-			_channels.erase(it);
+			(*it).second->part_user(_fd);
 			return (true);
 		}
 	}
@@ -140,7 +128,6 @@ std::ostream &operator<<(std::ostream &os, const Client &client)
 
 int Client::command_CAP(t_command &command)
 {
-	std::cout << "CAP command" << std::endl;
     if (command.parameters.size() < 1)
     {
         send_message("ERROR :No capability given");
@@ -149,27 +136,49 @@ int Client::command_CAP(t_command &command)
     if (command.parameters[0] == "LS")
         send_message("CAP * LS :cap1 cap2 cap3");
     else if (command.parameters[0] == "END")
+	{
+		if (!_has_password)
+		{
+			send_message("ERROR :You must set your password before ending capabilities");
+			return (0);
+		}
+		if (!_has_nick)
+		{
+			send_message("ERROR :You must set your nick before ending capabilities");
+			return (0);
+		}
+		if (!_has_Client)
+		{
+			send_message("ERROR :You must set your Client before ending capabilities");
+			return (0);
+		}
 		send_message(":ft_irc 001 " + _nick + " :Welcome to the IRC network, " + _nick + "!");
+	}
     else
 		send_message("ERROR :Invalid capability");
 	return (0);
 }
 
-int Client::command_PASS(t_command &)
+int Client::command_PASS(t_command &command)
 {
-	std::cout << "Test de pass" << std::endl;
+	if (command.parameters.size() < 1)
+	{
+		send_message("ERROR :No password given");
+		return (0);
+	}
+	if (_has_password)
+	{
+		send_message("ERROR :You have already set your password");
+		return (0);
+	}
+	if (command.parameters[0] != g_server.get_password())
+	{
+		send_message("ERROR :Invalid password");
+		return (0);
+	}
+	_has_password = true;
 	return (0);
 }
-
-
-
-
-
-
-
-
-
-
 
 bool erroneous_nick(std::string nick) {
 	std::string specials = "[]|^_-{}";
@@ -188,11 +197,15 @@ bool is_already_in_use(std::string nick) {
 	return false;
 }
 
-
 int Client::command_NICK(t_command &cmd)
 {
 	std::string old_nick = _nick;
 
+	if (cmd.parameters.size() < 1)
+	{
+		send_message(":ft_irc 421 * " + _nick + " NICK :Command requires one argument");
+		return 0;
+	}
 	if (cmd.parameters.size() > 1)
 	{
 		send_message(":ft_irc 421 * " + _nick + " NICK :Command takes only one argument");
@@ -210,7 +223,6 @@ int Client::command_NICK(t_command &cmd)
 	_nick = cmd.parameters[0];
 
 	send_message(":" + old_nick + "!" + _user + "@ft_irc NICK " + _nick);
-	// send_message(":ft_irc NICK " + _nick);
 	_has_nick = true;
 	return 1;
 }
@@ -254,8 +266,7 @@ int Client::command_JOIN(t_command &command)
     }
     if (g_server.get_channels().find(command.parameters[0]) == g_server.get_channels().end())
         g_server.get_channels()[command.parameters[0]] = new Channel(command.parameters[0], _fd);
-    channel = g_server.get_channels()[command.parameters[0]];   
-    _channels.push_back(channel);
+    channel = g_server.get_channels()[command.parameters[0]];
     if (channel->is_user(_fd))
     {
         send_message("ERROR :You are already in channel "

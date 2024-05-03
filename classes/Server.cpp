@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/03 03:52:15 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/03 11:15:10 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,20 @@
 
 void	Server::run(int &i)
 {
-	if (g_server.get_epoll().events[i].data.fd == g_server.get_socket().fd)
+	if (_epoll.events[i].data.fd == _socket.fd)
 	{
 		user_connection();
 		return ;
 	}
-	if ((g_server.get_epoll().events[i].events & EPOLLERR)
-		|| (g_server.get_epoll().events[i].events & EPOLLHUP)
-		|| (g_server.get_epoll().events[i].events & EPOLLRDHUP)
-		|| !(g_server.get_epoll().events[i].events & EPOLLIN))
+	if ((_epoll.events[i].events & EPOLLERR)
+		|| (_epoll.events[i].events & EPOLLHUP)
+		|| (_epoll.events[i].events & EPOLLRDHUP)
+		|| !(_epoll.events[i].events & EPOLLIN))
 	{
 		user_disconnection(i);
 		return ;
 	}
-	handle_message(g_server.get_epoll().events[i].data.fd);
+	handle_message(_epoll.events[i].data.fd);
 }
 
 bool Server::init(int port, std::string password)
@@ -108,12 +108,15 @@ Server::Server(void)
 
 Server::~Server(void)
 {
-	std::map<int, Client *>::iterator it;
-	for (it = _clients.begin(); it != _clients.end(); it++)
+	std::map<int, Client *>::iterator cl_it;
+	for (cl_it = _clients.begin(); cl_it != _clients.end(); cl_it++)
 	{
-		close (it->second->get_fd());
-		delete it->second;
+		close (cl_it->second->get_fd());
+		delete cl_it->second;
 	}
+	std::map<std::string, Channel *>::iterator ch_it;
+	for (ch_it = _channels.begin(); ch_it != _channels.end(); ch_it++)
+		delete ch_it->second;
 }
 
 t_epoll &Server::get_epoll(void)
