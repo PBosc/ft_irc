@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/03 14:15:09 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/03 14:42:22 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,6 +196,16 @@ void Server::set_clients_id(int &clients_id)
 
 void Server::kick_user(int fd)
 {
+	if (_clients.find(fd) == _clients.end())
+	{
+		std::cerr << "Error: no such user" << std::endl;
+		return ;
+	}
+	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
+	{
+		if (it->second->is_user(fd))
+			it->second->kick_user(fd);
+	}
 	delete _clients[fd];
 	_clients.erase(fd);
 	close(fd);

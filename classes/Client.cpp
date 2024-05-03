@@ -229,7 +229,7 @@ int Client::command_NICK(t_command &cmd)
 	}
 	// if (is_already_in_use(cmd.parameters[0])) {
 	// 	send_message(":ft_irc 433 * " + cmd.parameters[0]
-			// + " :Nickname is already in use");
+	// + " :Nickname is already in use");
 	// 	return (0);
 	// }
 	_nick = cmd.parameters[0];
@@ -324,14 +324,20 @@ int Client::command_NAMES(t_command &command)
 int Client::command_PRIVMSG(t_command &command)
 {
 	Channel	*channel;
-
 	if (command.parameters.size() < 1)
 	{
 		send_message("ERROR :Not enough parameters");
 		return (0);
 	}
-	if (command.parameters[0][0] == '#')
+	std::cout << command.command << ": " << command.parameters[0] << ": " << command.suffix << std::endl;
+	size_t find = command.parameters.at(0).find_first_of("#", 0);
+	if (find == std::string::npos && find == 0)
 	{
+		if (command.parameters.at(0).size() < 2)
+		{
+			send_message("ERROR :Invalid channel");
+			return (0);
+		}
 		if (g_server.get_channels().find(command.parameters[0]) != g_server.get_channels().end())
 			channel = g_server.get_channels()[command.parameters[0]];
 		else
@@ -348,6 +354,18 @@ int Client::command_PRIVMSG(t_command &command)
 		std::string message = ":" + g_server.get_clients()[_fd]->get_nick()
 			+ " PRIVMSG " + command.parameters[0] + " :" + command.suffix;
 		channel->broadcast(message, _fd);
+		return (0);
+	}
+	for (std::map<int,
+		Client *>::iterator it = g_server.get_clients().begin(); it != g_server.get_clients().end(); it++)
+	{
+		if ((*it).second->get_nick() == command.parameters[0])
+		{
+			(*it).second->send_message(":"
+				+ g_server.get_clients()[_fd]->get_nick() + " PRIVMSG "
+				+ command.parameters[0] + " :" + command.suffix);
+			return (0);
+		}
 	}
 	return (0);
 }
@@ -400,21 +418,21 @@ int Client::command_KICK(t_command &command)
 	if (!_is_operator)
 	{
 		send_message("ERROR :You are not an operator");
-		return 0;
+		return (0);
 	}
 	if (g_server.get_channels().find(command.parameters[0]) != g_server.get_channels().end())
 		channel = g_server.get_channels()[command.parameters[0]];
 	else
 	{
 		send_message("ERROR :No such channel " + command.parameters[0]);
-		return 0;
+		return (0);
 	}
 	if (!channel->is_user(_fd))
 	{
 		send_message("ERROR :You are not in channel " + command.parameters[0]);
-		return 0;
+		return (0);
 	}
-	return 0;
+	return (0);
 }
 
 int Client::command_KILL(t_command &command)
@@ -422,14 +440,14 @@ int Client::command_KILL(t_command &command)
 	if (command.parameters.size() < 2)
 	{
 		send_message("ERROR :Not enough parameters");
-		return 0;
+		return (0);
 	}
 	if (!_is_operator)
 	{
 		send_message("ERROR :You are not an operator");
-		return 0;
+		return (0);
 	}
-	return 0;
+	return (0);
 }
 
 int Client::command_OPER(t_command &command)
@@ -437,28 +455,28 @@ int Client::command_OPER(t_command &command)
 	if (command.parameters.size() < 2)
 	{
 		send_message("ERROR :Not enough parameters");
-		return 0;
+		return (0);
 	}
 	if (_has_password)
 	{
 		send_message("ERROR :You have already set your password");
-		return 0;
+		return (0);
 	}
 	if (command.parameters[1] != "password")
 	{
 		send_message("ERROR :Invalid password");
-		return 0;
+		return (0);
 	}
 	_has_password = true;
 	_is_operator = true;
-	return 0;
+	return (0);
 }
 
 int Client::command_MODE(t_command &command)
 {
 	(void)command;
 	send_message("ERROR :MODE command not implemented");
-	return 0;
+	return (0);
 }
 
 int Client::command_TOPIC(t_command &command)
@@ -468,24 +486,24 @@ int Client::command_TOPIC(t_command &command)
 	if (command.parameters.size() < 1)
 	{
 		send_message("ERROR :No channel given");
-		return 0;
+		return (0);
 	}
 	if (g_server.get_channels().find(command.parameters[0]) != g_server.get_channels().end())
 		channel = g_server.get_channels()[command.parameters[0]];
 	else
 	{
 		send_message("ERROR :No such channel " + command.parameters[0]);
-		return 0;
+		return (0);
 	}
 	if (command.parameters.size() < 2)
 	{
 		send_message("ERROR :No topic given");
-		return 0;
+		return (0);
 	}
 	if (!channel->is_user(_fd))
 	{
 		send_message("ERROR :You are not in channel " + command.parameters[0]);
-		return 0;
+		return (0);
 	}
 	channel->set_topic(command.parameters[1]);
 	return 0;
