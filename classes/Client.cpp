@@ -74,7 +74,7 @@ Client::~Client()
 
 bool Client::send_message(const std::string &message)
 {
-	return (send(g_server.get_epoll().events->data.fd, message.c_str(), message.length(), 0) != -1);
+	return (send(g_server.get_epoll().events->data.fd, (message + "\n").c_str(), message.length() + 1, 0) != -1);
 }
 
 bool Client::remove_channel(std::string channel_name)
@@ -149,7 +149,7 @@ int Client::command_CAP(t_command &command)
     if (command.parameters[0] == "LS")
         send_message("CAP * LS :cap1 cap2 cap3");
     else if (command.parameters[0] == "END")
-		send_message("CAP * ACK :cap1 cap2=enabled cap3=disabled");
+		send_message(":irc.example.com 001 client_nick :Welcome to the IRC network, client_nick!");
     else
 		send_message("ERROR :Invalid capability");
 	return (0);
@@ -157,6 +157,7 @@ int Client::command_CAP(t_command &command)
 
 int Client::command_PASS(t_command &)
 {
+	std::cout << "Test de pass" << std::endl;
 	return (0);
 }
 

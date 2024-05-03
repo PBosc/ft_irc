@@ -6,7 +6,7 @@
 /*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/03 03:54:16 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/03 04:14:29 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ void	handle_message(int fd)
 	bool	closed;
 	Client	*client;
 	std::string line;
-	t_command cmd;
 
 	client = g_server.get_clients()[fd];
 	std::cout << "User " << fd << " is sending a command" << std::endl;
@@ -88,15 +87,19 @@ void	handle_message(int fd)
 			std::stringstream ss(client->get_message());
 			while (std::getline(ss, line))
 			{
+				t_command cmd;
 				if (line.size() == client->get_message().size())
 					break ;
-				// std::cout << "User " << fd << " sent: " << line << std::endl;
 				if (!format_command(line, cmd)) {
 					std::cout << "Failure" << std::endl;
 					// todo error handling if command is not correct format 
 				}
+				if (g_server.get_commands().find(cmd.command) != g_server.get_commands().end())
+					(client->*g_server.get_commands()[cmd.command])(cmd);
+				else
+					(client->*g_server.get_commands()["UNKNOWN"])(cmd);
 				std::cout << cmd << std::endl;
-				// client->get_message().erase(0, line.size() + 1);
+				client->get_message().erase(0, line.size() + 1);
 			}
 			break ;
 		}
