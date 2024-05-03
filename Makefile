@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+         #
+#    By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/13 22:58:31 by wouhliss          #+#    #+#              #
-#    Updated: 2024/05/02 23:07:01 by wouhliss         ###   ########.fr        #
+#    Updated: 2024/05/03 06:21:37 by ybelatar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ OBJS = 	${SRCS:.cpp=.o} \
 DEPS = 	${SRCS:.cpp=.d} \
 		${CLASS:.cpp=.d}
 
-NAME = ft_irc
+NAME = ircserv
 
 all: ${NAME}
 

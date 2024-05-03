@@ -1,4 +1,5 @@
 *.d
 *.o
 ft_irc
+ircserv
 .vscode

@@ -4,6 +4,7 @@
 # include <arpa/inet.h>
 # include <cstdlib>
 # include <ctime>
+# include <cctype>
 # include <errno.h>
 # include <fcntl.h>
 # include <functional>

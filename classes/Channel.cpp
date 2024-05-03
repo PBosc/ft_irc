@@ -1,5 +1,6 @@
 #include "Channel.hpp"
 #include "Client.hpp"
+#include "Server.hpp"
 
 Channel::Channel() {
     _name = "";
@@ -105,9 +106,11 @@ unsigned int Channel::get_user_limit(void) const {
 }
 
 void Channel::broadcast(std::string message, int emitter) {
+    std::cout << this << std::endl;
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
         if (*it != emitter) {
-            send(*it, message.c_str(), message.length(), 0);
+            std::cout << "Sending message to user " << *it << " from user" << emitter << std::endl;
+            g_server.get_clients()[*it]->send_message(message);
         }
     }
 }
