@@ -36,7 +36,7 @@ int	main(int ac, char **av)
 	while (!end)
 	{
 		epoll_fds = epoll_wait(g_server.get_epoll().fd, g_server.get_epoll().events,
-				MAX_CONNECTIONS, 3000);
+				MAX_CONNECTIONS, 500);
 		if (epoll_fds < 0 && !end)
 		{
 			std::cerr << "Error: epoll_wait failed" << std::endl;

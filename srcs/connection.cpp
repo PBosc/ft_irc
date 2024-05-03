@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:01:15 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/02 22:39:13 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/03 11:53:30 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,14 @@ void	user_connection(void)
 	fd_new_con = accept(g_server.get_socket().fd, (struct sockaddr *)&socket_new_con,
 			&size_socket_new_con);
 	if (fd_new_con < 0)
-	{
+	{	
 		std::cerr << "Error: accept() failed" << std::endl;
-		exit(EXIT_FAILURE);
+		if (errno != EWOULDBLOCK)
+		{
+			std::cerr << "accept() failed" << std::endl;
+			exit(1);
+		}
+		return ;
 	}
 	epoll_event_new_con.events = EPOLLIN | EPOLLRDHUP;
 	epoll_event_new_con.data.fd = fd_new_con;
@@ -39,7 +44,8 @@ void	user_connection(void)
 			&epoll_event_new_con) < 0)
 	{
 		std::cerr << "Error: epoll_ctl() failed" << std::endl;
-		exit(EXIT_FAILURE);
+		close(fd_new_con);
+		return ;
 	}
 	std::cout << "User connected with fd: " << fd_new_con << std::endl;
 	Client *client = new Client(fd_new_con, ++g_server.get_clients_id());
