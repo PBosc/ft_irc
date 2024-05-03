@@ -37,6 +37,8 @@ class Client
 	int command_INVITE(t_command &command);
 	int command_unknown(t_command &command);
 
+	bool can_execute(void) const;
+
 	bool remove_channel(std::string channel_name);
 	int get_id(void) const;
 	int get_fd(void) const;

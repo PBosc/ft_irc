@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/03 14:14:59 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/03 17:34:05 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void	handle_message(int fd)
 			std::stringstream ss(client->get_message());
 			while (std::getline(ss, line))
 			{
+				std::cout << line << std::endl;
 				t_command cmd;
 				if (line.size() == client->get_message().size())
 					break ;

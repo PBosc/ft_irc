@@ -59,6 +59,11 @@ Client &Client::operator=(const Client &rhs)
 	return (*this);
 }
 
+bool Client::can_execute(void) const
+{
+	return (_has_password && _has_nick && _has_Client);
+}
+
 bool Client::send_message(const std::string &message)
 {
 	return (send(_fd, (message + "\n").c_str(), message.length() + 1, 0) != -1);
@@ -270,6 +275,11 @@ int Client::command_JOIN(t_command &command)
 {
 	Channel	*channel;
 
+	if (!_has_password || !_has_Client || !_has_nick)
+	{
+		send_message("ERROR :You must set your password, nick and user before joining a channel");
+		return (0);
+	}
 	if (command.parameters.size() < 1)
 	{
 		send_message("ERROR :No channel given");
@@ -299,6 +309,11 @@ int Client::command_NAMES(t_command &command)
 {
 	Channel	*channel;
 
+	if (!_has_password || !_has_Client || !_has_nick)
+	{
+		send_message("ERROR :You must set your password, nick and user before listing names");
+		return (0);
+	}
 	if (command.parameters.size() < 1)
 	{
 		send_message("ERROR :No channel given");
@@ -324,20 +339,20 @@ int Client::command_NAMES(t_command &command)
 int Client::command_PRIVMSG(t_command &command)
 {
 	Channel	*channel;
+
+	if (!_has_password || !_has_Client || !_has_nick)
+	{
+		send_message("ERROR :You must set your password, nick and user before sending a message");
+		return (0);
+	}
 	if (command.parameters.size() < 1)
 	{
 		send_message("ERROR :Not enough parameters");
 		return (0);
 	}
 	std::cout << command.command << ": " << command.parameters[0] << ": " << command.suffix << std::endl;
-	size_t find = command.parameters.at(0).find_first_of("#", 0);
-	if (find == std::string::npos && find == 0)
+	if (command.parameters.at(0).size() > 2 && command.parameters.at(0).at(0) == '#')
 	{
-		if (command.parameters.at(0).size() < 2)
-		{
-			send_message("ERROR :Invalid channel");
-			return (0);
-		}
 		if (g_server.get_channels().find(command.parameters[0]) != g_server.get_channels().end())
 			channel = g_server.get_channels()[command.parameters[0]];
 		else
@@ -351,7 +366,7 @@ int Client::command_PRIVMSG(t_command &command)
 				+ command.parameters[0]);
 			return (0);
 		}
-		std::string message = ":" + g_server.get_clients()[_fd]->get_nick()
+		std::string message = ":" + _nick
 			+ " PRIVMSG " + command.parameters[0] + " :" + command.suffix;
 		channel->broadcast(message, _fd);
 		return (0);
@@ -361,9 +376,9 @@ int Client::command_PRIVMSG(t_command &command)
 	{
 		if ((*it).second->get_nick() == command.parameters[0])
 		{
-			(*it).second->send_message(":"
-				+ g_server.get_clients()[_fd]->get_nick() + " PRIVMSG "
-				+ command.parameters[0] + " :" + command.suffix);
+			std::cout << "" << std::endl;
+			(*it).second->send_message(":" + _nick
+				+ " PRIVMSG " + command.parameters[0] + " :" + command.suffix);
 			return (0);
 		}
 	}
@@ -385,6 +400,11 @@ int Client::command_PART(t_command &command)
 {
 	Channel	*channel;
 
+	if (!_has_password || !_has_Client || !_has_nick)
+	{
+		send_message("ERROR :You must set your password, nick and user before leaving a channel");
+		return (0);
+	}
 	if (command.parameters.size() < 1)
 	{
 		send_message("ERROR :No channel given");
@@ -410,6 +430,11 @@ int Client::command_KICK(t_command &command)
 {
 	Channel	*channel;
 
+	if (!_has_password || !_has_Client || !_has_nick)
+	{
+		send_message("ERROR :You must set your password, nick and user before kicking a user");
+		return (0);
+	}
 	if (command.parameters.size() < 2)
 	{
 		send_message("ERROR :Not enough parameters");
@@ -437,6 +462,11 @@ int Client::command_KICK(t_command &command)
 
 int Client::command_KILL(t_command &command)
 {
+	if (!_has_password || !_has_Client || !_has_nick)
+	{
+		send_message("ERROR :You must set your password, nick and user before killing a user");
+		return (0);
+	}
 	if (command.parameters.size() < 2)
 	{
 		send_message("ERROR :Not enough parameters");
@@ -452,6 +482,11 @@ int Client::command_KILL(t_command &command)
 
 int Client::command_OPER(t_command &command)
 {
+	if (!_has_password || !_has_Client || !_has_nick)
+	{
+		send_message("ERROR :You must set your password, nick and user before becoming an operator");
+		return (0);
+	}
 	if (command.parameters.size() < 2)
 	{
 		send_message("ERROR :Not enough parameters");
@@ -483,6 +518,11 @@ int Client::command_TOPIC(t_command &command)
 {
 	Channel	*channel;
 
+	if (!_has_password || !_has_Client || !_has_nick)
+	{
+		send_message("ERROR :You must set your password, nick and user before setting a topic");
+		return (0);
+	}
 	if (command.parameters.size() < 1)
 	{
 		send_message("ERROR :No channel given");
