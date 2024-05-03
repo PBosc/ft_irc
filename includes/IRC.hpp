@@ -2,9 +2,9 @@
 # define IRC_HPP
 # include <algorithm>
 # include <arpa/inet.h>
+# include <cctype>
 # include <cstdlib>
 # include <ctime>
-# include <cctype>
 # include <errno.h>
 # include <fcntl.h>
 # include <functional>
@@ -26,7 +26,7 @@
 # include <utility>
 # include <vector>
 
-# define MAX_CONNECTIONS 1000
+# define MAX_CONNECTIONS 5000
 # define BUFFER_SIZE 4096
 
 class					Client;
@@ -57,5 +57,4 @@ typedef struct s_command
 void					user_connection(void);
 void					user_disconnection(int &i);
 void					handle_message(int fd);
-std::ostream 		&operator<<(std::ostream &out, t_command &cmd);
 #endif

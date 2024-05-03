@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/03 11:15:10 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/03 14:15:09 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ bool Server::init(int port, std::string password)
 	_socket.addr.sin_family = AF_INET;
 	_socket.addr.sin_port = htons(port);
 	_socket.addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	if (setsockopt(_socket.fd, SOL_SOCKET, SO_REUSEADDR, &sock_opt_val,
+	if (setsockopt(_socket.fd, SOL_SOCKET, SO_REUSEADDR, (char *)&sock_opt_val,
 			sizeof(sock_opt_val)) < 0)
 	{
 		std::cerr << "Error: setsockopt() failed" << std::endl;
@@ -192,6 +192,14 @@ int &Server::get_clients_id(void)
 void Server::set_clients_id(int &clients_id)
 {
 	_clients_id = clients_id;
+}
+
+void Server::kick_user(int fd)
+{
+	delete _clients[fd];
+	_clients.erase(fd);
+	close(fd);
+	std::cout << "User with fd " << fd << " disconnected." << std::endl;
 }
 
 std::ostream &operator<<(std::ostream &os, Server &server)

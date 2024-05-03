@@ -106,7 +106,6 @@ unsigned int Channel::get_user_limit(void) const {
 }
 
 void Channel::broadcast(std::string message, int emitter) {
-    std::cout << this << std::endl;
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
         if (*it != emitter) {
             g_server.get_clients()[*it]->send_message(message);

@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/03 11:21:10 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/03 14:14:59 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	handle_message(int fd)
 	std::string line;
 
 	client = g_server.get_clients()[fd];
-	std::cout << "User " << fd << " is sending a command" << std::endl;
 	closed = false;
 	while (true)
 	{
@@ -42,7 +41,6 @@ void	handle_message(int fd)
 				t_command cmd;
 				if (line.size() == client->get_message().size())
 					break ;
-				std::cout << "Command: " << line << std::endl;
 				std::stringstream	stream(line);
 				stream >> cmd.command;
 				std::string param;
@@ -59,7 +57,10 @@ void	handle_message(int fd)
 					cmd.parameters.push_back(param);
 				}
 				if (g_server.get_commands().find(cmd.command) != g_server.get_commands().end())
-					(client->*g_server.get_commands()[cmd.command])(cmd);
+				{
+					if ((client->*g_server.get_commands()[cmd.command])(cmd))
+						return ;
+				}
 				else
 					(client->*g_server.get_commands()["UNKNOWN"])(cmd);
 				client->get_message().erase(0, line.size() + 1);

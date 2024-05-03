@@ -29,14 +29,14 @@ int	main(int ac, char **av)
 		std::cerr << "Usage: ./ft_irc <port> <password>" << std::endl;
 		return (84);
 	}
-	if (!g_server.init(std::atoi(av[1]), std::string(av[2])))
+	signal(SIGINT, handle_quit);
+	if (end || !g_server.init(std::atoi(av[1]), std::string(av[2])))
 		return (84);
 	std::cout << g_server << std::endl;
-	signal(SIGINT, handle_quit);
 	while (!end)
 	{
 		epoll_fds = epoll_wait(g_server.get_epoll().fd, g_server.get_epoll().events,
-				MAX_CONNECTIONS, 500);
+				MAX_CONNECTIONS, -1);
 		if (epoll_fds < 0 && !end)
 		{
 			std::cerr << "Error: epoll_wait failed" << std::endl;

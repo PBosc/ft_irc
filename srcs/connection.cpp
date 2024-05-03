@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:01:15 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/03 11:53:30 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/03 14:04:16 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,7 @@ void	user_connection(void)
 	fd_new_con = accept(g_server.get_socket().fd, (struct sockaddr *)&socket_new_con,
 			&size_socket_new_con);
 	if (fd_new_con < 0)
-	{	
-		std::cerr << "Error: accept() failed" << std::endl;
+	{
 		if (errno != EWOULDBLOCK)
 		{
 			std::cerr << "accept() failed" << std::endl;
@@ -55,8 +54,6 @@ void	user_connection(void)
 void	user_disconnection(int &i)
 {
 	epoll_ctl(g_server.get_epoll().fd, EPOLL_CTL_DEL, g_server.get_epoll().events[i].data.fd, &g_server.get_socket().event);
-	close(g_server.get_epoll().events[i].data.fd);
 	std::cout << "User with fd: " << g_server.get_epoll().events[i].data.fd << " disconnected" << std::endl;
-	delete g_server.get_clients()[g_server.get_epoll().events[i].data.fd];
-	g_server.get_clients().erase(g_server.get_epoll().events[i].data.fd);
+	g_server.kick_user(g_server.get_epoll().events[i].data.fd);
 }

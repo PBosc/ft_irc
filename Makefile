@@ -6,13 +6,13 @@
 #    By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/13 22:58:31 by wouhliss          #+#    #+#              #
-#    Updated: 2024/05/03 11:25:23 by wouhliss         ###   ########.fr        #
+#    Updated: 2024/05/03 14:05:14 by wouhliss         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CPP = c++
 INCLUDE_PATH = ./includes
-CPP_FLAGS = -Wall -Wextra -Werror -MMD -MP -std=c++98 -O3 -I $(INCLUDE_PATH)
+CPP_FLAGS = -Wall -Wextra -Werror -MMD -MP -std=c++98 -g3 -I $(INCLUDE_PATH)
 RM = rm
 RM_FLAGS = -rf
 

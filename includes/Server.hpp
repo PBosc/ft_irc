@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:40:32 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/03 03:50:46 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/03 14:13:04 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class Server
 	void set_clients_id(int &clients_id);
 	bool init(int port, std::string password);
 	void run(int &i);
+	void kick_user(int fd);
   private:
 	t_epoll _epoll;
 	t_socket _socket;
