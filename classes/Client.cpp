@@ -2,26 +2,6 @@
 #include "Client.hpp"
 #include "Server.hpp"
 
-void Client::init_commands(void)
-{
-	commands["PASS"] = &Client::command_PASS;
-	commands["NICK"] = &Client::command_NICK;
-	commands["USER"] = &Client::command_USER;
-	commands["PING"] = &Client::command_PING;
-	commands["JOIN"] = &Client::command_JOIN;
-	commands["NAMES"] = &Client::command_NAMES;
-	commands["PRIVMSG"] = &Client::command_PRIVMSG;
-	commands["QUIT"] = &Client::command_QUIT;
-	commands["PART"] = &Client::command_PART;
-	commands["KICK"] = &Client::command_KICK;
-	commands["KILL"] = &Client::command_KILL;
-	commands["OPER"] = &Client::command_OPER;
-	commands["MODE"] = &Client::command_MODE;
-	commands["TOPIC"] = &Client::command_TOPIC;
-	commands["NOTICE"] = &Client::command_NOTICE;
-	commands["INVITE"] = &Client::command_INVITE;
-	commands["UNKNOWN"] = &Client::command_unknown;
-}
 
 Client::Client()
 {
@@ -36,7 +16,6 @@ Client::Client()
 	_is_identified = false;
 	_channels = std::vector<Channel *>();
 	_message = "";
-	init_commands();
 }
 
 Client::Client(int fd, int id)
@@ -52,7 +31,6 @@ Client::Client(int fd, int id)
 	_is_identified = false;
 	_channels = std::vector<Channel *>();
 	_message = "";
-	init_commands();
 }
 
 Client::Client(const Client &obj)
@@ -68,7 +46,6 @@ Client::Client(const Client &obj)
 	_is_identified = obj._is_identified;
 	_channels = obj._channels;
 	_message = obj._message;
-	commands = obj.commands;
 }
 
 Client &Client::operator=(const Client &rhs)
@@ -159,6 +136,23 @@ std::ostream &operator<<(std::ostream &os, const Client &client)
 	os << "Client " << client.get_id() << " (" << client.get_nick() << ")"
 		<< "writing to fd " << client.get_fd() << std::endl;
 	return (os);
+}
+
+int Client::command_CAP(t_command &command)
+{
+	std::cout << "CAP command" << std::endl;
+    if (command.parameters.size() < 1)
+    {
+        send_message("ERROR :No capability given");
+        return (0);
+    }
+    if (command.parameters[0] == "LS")
+        send_message("CAP * LS :cap1 cap2 cap3");
+    else if (command.parameters[0] == "END")
+		send_message("CAP * ACK :cap1 cap2=enabled cap3=disabled");
+    else
+		send_message("ERROR :Invalid capability");
+	return (0);
 }
 
 int Client::command_PASS(t_command &)

@@ -6,7 +6,7 @@
 /*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/02 23:38:29 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/03 03:52:15 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,24 @@ bool Server::init(int port, std::string password)
 	_port = port;
 	_password = password;
 	sock_opt_val = 1;
+	_commands["CAP"] = &Client::command_CAP;
+	_commands["PASS"] = &Client::command_PASS;
+	_commands["NICK"] = &Client::command_NICK;
+	_commands["USER"] = &Client::command_USER;
+	_commands["PING"] = &Client::command_PING;
+	_commands["JOIN"] = &Client::command_JOIN;
+	_commands["NAMES"] = &Client::command_NAMES;
+	_commands["PRIVMSG"] = &Client::command_PRIVMSG;
+	_commands["QUIT"] = &Client::command_QUIT;
+	_commands["PART"] = &Client::command_PART;
+	_commands["KICK"] = &Client::command_KICK;
+	_commands["KILL"] = &Client::command_KILL;
+	_commands["OPER"] = &Client::command_OPER;
+	_commands["MODE"] = &Client::command_MODE;
+	_commands["TOPIC"] = &Client::command_TOPIC;
+	_commands["NOTICE"] = &Client::command_NOTICE;
+	_commands["INVITE"] = &Client::command_INVITE;
+	_commands["UNKNOWN"] = &Client::command_unknown;
 	_socket.fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socket.fd < 0)
 	{
@@ -111,6 +129,11 @@ void Server::set_epoll(t_epoll &epoll)
 t_socket &Server::get_socket(void)
 {
 	return (_socket);
+}
+
+std::map<std::string, ScriptFunction> &Server::get_commands(void)
+{
+	return (_commands);
 }
 
 void Server::set_socket(t_socket &socket)

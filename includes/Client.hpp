@@ -6,8 +6,6 @@
 
 class Client
 {
-	typedef int (Client::*ScriptFunction)(t_command &command);
-
   private:
 	int _id, _fd;
 	std::string _nick, _client, _name;
@@ -23,7 +21,7 @@ class Client
 	Client &operator=(const Client &rhs);
 	~Client();
 	bool send_message(const std::string &message);
-	// void	execute_commands(t_command &command);
+	int command_CAP(t_command &command);
 	int command_PASS(t_command &command);
 	int command_NICK(t_command &command);
 	int command_USER(t_command &command);
@@ -49,7 +47,6 @@ class Client
 	std::string get_client(void) const;
 	bool get_identification(void) const;
 	bool is_operator(void);
-	std::map<std::string, ScriptFunction> commands;
 	std::string &get_message(void);
 	void set_message(std::string &message);
 };

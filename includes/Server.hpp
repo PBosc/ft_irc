@@ -6,7 +6,7 @@
 /*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:40:32 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/02 23:21:13 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/03 03:50:46 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,11 @@
 # define __SERVER_HPP__
 # include "IRC.hpp"
 
+typedef int (Client::*ScriptFunction)(t_command &);
+
 class Server
 {
+
   public:
 	Server(void);
 	~Server(void);
@@ -33,6 +36,7 @@ class Server
 	std::map<int, Client *> &get_clients(void);
 	void set_client(int &fd, Client *client);
 	int &get_clients_id(void);
+	std::map<std::string, ScriptFunction> &get_commands(void);
 	void set_clients_id(int &clients_id);
 	bool init(int port, std::string password);
 	void run(int &i);
@@ -43,6 +47,7 @@ class Server
 	std::string _password;
 	std::map<std::string, Channel *> _channels;
 	std::map<int, Client *> _clients;
+	std::map<std::string, ScriptFunction> _commands;
 	int _clients_id;
 
 
