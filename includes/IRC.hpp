@@ -49,11 +49,12 @@ typedef struct s_command
 	std::string prefix;
 	std::string command;
 	std::vector<std::string> parameters;
-	std::string last_param;
-	bool				has_last_param;
+	std::string suffix;
+	// bool				has_last_param;
 }						t_command;
 
 void					user_connection(void);
 void					user_disconnection(int &i);
 void					handle_message(int fd);
+std::ostream 		&operator<<(std::ostream &out, t_command &cmd);
 #endif
