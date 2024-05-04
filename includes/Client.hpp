@@ -51,4 +51,6 @@ class Client
 	void set_message(std::string &message);
 };
 
+bool	is_already_in_use(std::string nick);
+
 #endif

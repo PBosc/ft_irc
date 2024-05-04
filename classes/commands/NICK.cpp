@@ -6,7 +6,7 @@
 /*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:30 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 04:30:39 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 05:37:13 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,6 @@ bool	erroneous_nick(std::string nick)
 	for (std::string::iterator it = nick.begin(); it != nick.end(); it++)
 	{
 		if (!isalnum(*it) && specials.find(*it) == std::string::npos)
-			return (true);
-	}
-	return (false);
-}
-
-bool	is_already_in_use(std::string nick)
-{
-	for (std::map<int,
-		Client *>::iterator it = g_server.get_clients().begin(); it != g_server.get_clients().end(); it++)
-	{
-		if (nick == (*it).second->get_nick())
 			return (true);
 	}
 	return (false);

@@ -13,6 +13,7 @@ Client::Client()
 	_has_nick = false;
 	_has_Client = false;
 	_is_identified = false;
+	_is_operator = false;
 	_message = "";
 }
 
@@ -27,6 +28,7 @@ Client::Client(int fd, int id)
 	_has_nick = false;
 	_has_Client = false;
 	_is_identified = false;
+	_is_operator = false;
 	_message = "";
 }
 
@@ -41,6 +43,7 @@ Client::Client(const Client &obj)
 	_has_nick = obj._has_nick;
 	_has_Client = obj._has_Client;
 	_is_identified = obj._is_identified;
+	_is_operator = obj._is_operator;
 	_message = obj._message;
 }
 
@@ -55,6 +58,7 @@ Client &Client::operator=(const Client &rhs)
 	_has_nick = rhs._has_nick;
 	_has_Client = rhs._has_Client;
 	_is_identified = rhs._is_identified;
+	_is_operator = rhs._is_operator;
 	_message = rhs._message;
 	return (*this);
 }
@@ -141,4 +145,15 @@ std::ostream &operator<<(std::ostream &os, const Client &client)
 	os << "Client " << client.get_id() << " (" << client.get_nick() << ")"
 		<< "writing to fd " << client.get_fd() << std::endl;
 	return (os);
+}
+
+bool	is_already_in_use(std::string nick)
+{
+	for (std::map<int,
+		Client *>::iterator it = g_server.get_clients().begin(); it != g_server.get_clients().end(); it++)
+	{
+		if (nick == (*it).second->get_nick())
+			return (true);
+	}
+	return (false);
 }

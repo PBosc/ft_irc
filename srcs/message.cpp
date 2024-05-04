@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 03:12:59 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/04 05:51:05 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ t_command parse_command(std::string line)
 		ss >> word;
 		pos = word.find(":");
 	}
+	std::transform(word.begin(), word.end(), word.begin(), ::toupper);
 	cmd.command = word;
 	while (ss >> word && word[0] != ':')
 	{
