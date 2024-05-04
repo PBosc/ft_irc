@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 01:11:18 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/04 02:29:58 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,48 @@
 #include "Client.hpp"
 #include "IRC.hpp"
 #include "Server.hpp"
+
+std::ostream& operator<<(std::ostream &out, t_command &cmd)
+{
+    out << "####  NEW COMMAND  ####" << std::endl;
+    out << "    PREFIX = " << cmd.prefix << std::endl; 
+    out    << "    COMMAND = " << cmd.command << std::endl;
+    out    << " PARAMETERS :" << std::endl;
+    for (std::vector<std::string>::iterator it = cmd.parameters.begin(); it != cmd.parameters.end(); it++) {
+        out << "        - " << *it << std::endl;
+    }
+    out << "    SUFFIX = " << cmd.suffix << std::endl << std::endl << std::endl;
+    return (out);
+}
+
+t_command parse_command(std::string line)
+{
+	t_command cmd;
+	
+	std::stringstream ss(line);
+	std::string word;
+
+	ss >> word;
+	unsigned long pos = word.find(":");
+	while (pos == word.size() - 1)
+	{
+		cmd.prefix.append(word);
+		ss >> word;
+		pos = word.find(":");
+	}
+	cmd.command = word;
+	while (ss >> word && word[0] != ':')
+	{
+		cmd.parameters.push_back(word);
+	}
+	while (ss)
+	{
+		cmd.suffix.append(word);
+		cmd.suffix.append(" ");
+		ss >> word;
+	}
+	return (cmd);
+}
 
 void	handle_message(int fd)
 {
@@ -42,21 +84,8 @@ void	handle_message(int fd)
 				t_command cmd;
 				if (line.size() == client->get_message().size())
 					break ;
-				std::stringstream	stream(line);
-				stream >> cmd.command;
-				std::string param;
-				while (stream >> param)
-				{
-					if (param.size() && param.at(0) == ':')
-					{
-						param.erase(0, 1);
-						cmd.suffix = param;
-						while (stream >> param)
-							cmd.suffix.append(" " + param);
-						break ;
-					}
-					cmd.parameters.push_back(param);
-				}
+				cmd = parse_command(line);
+				std::cout << cmd << std::endl;
 				if (g_server.get_commands().find(cmd.command) != g_server.get_commands().end())
 				{
 					if ((client->*g_server.get_commands()[cmd.command])(cmd))
