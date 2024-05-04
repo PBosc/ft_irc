@@ -47,6 +47,7 @@ class Client
 	bool get_identification(void) const;
 	bool is_operator(void);
 	std::string &get_message(void);
+	void set_operator(bool b);
 	void set_message(std::string &message);
 };
 

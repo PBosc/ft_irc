@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 01:04:29 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/04 04:20:37 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,9 @@ bool Server::init(int port, std::string password)
 		std::cerr << "Error: epoll_ctl() failed" << std::endl;
 		return (close(_socket.fd), close(_epoll.fd), false);
 	}
+	_operators["ybelatar"] = "ybelatar";
+	_operators["pibosc"] = "pibosc";
+	_operators["wouhliss"] = "wouhliss";
 	return (true);
 }
 
@@ -210,6 +213,18 @@ void Server::kick_user(int fd)
 	_clients.erase(fd);
 	close(fd);
 	std::cout << "User with fd " << fd << " disconnected." << std::endl;
+}
+
+Client *Server::find_client_by_nick(std::string &nick) {
+	for (std::map<int, Client *>::iterator it = g_server.get_clients().begin(); it != g_server.get_clients().end(); it++) {
+		if ((*it).second->get_nick() == nick)
+			return (*it).second;
+	}
+	return NULL;
+}
+
+std::map<std::string, std::string> &Server::get_operators() {
+	return _operators;
 }
 
 std::ostream &operator<<(std::ostream &os, Server &server)

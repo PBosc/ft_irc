@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:40:32 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/03 14:13:04 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/04 04:17:12 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,9 @@ class Server
 	std::map<int, Client *> &get_clients(void);
 	void set_client(int &fd, Client *client);
 	int &get_clients_id(void);
+	Client *find_client_by_nick(std::string &nick);
 	std::map<std::string, ScriptFunction> &get_commands(void);
+	std::map<std::string, std::string> &get_operators(void);
 	void set_clients_id(int &clients_id);
 	bool init(int port, std::string password);
 	void run(int &i);
@@ -46,6 +48,7 @@ class Server
 	t_socket _socket;
 	int _port;
 	std::string _password;
+	std::map<std::string, std::string>_operators;
 	std::map<std::string, Channel *> _channels;
 	std::map<int, Client *> _clients;
 	std::map<std::string, ScriptFunction> _commands;
