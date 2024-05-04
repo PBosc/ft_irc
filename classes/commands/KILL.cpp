@@ -6,7 +6,7 @@
 /*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:22 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 05:59:56 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 06:39:14 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 
 int Client::command_KILL(t_command &cmd)
 {
+	Client *target;
+	
 	if (!_has_password || !_has_Client || !_has_nick) {
 		send_message(":ft_irc 451 * KILL :You have not registered");
 		return 1;
@@ -28,7 +30,9 @@ int Client::command_KILL(t_command &cmd)
 		send_message(":ft_irc 501 * :There is no such user");
 		return 0;
 	}
-	g_server.kick_user(g_server.find_client_by_nick(cmd.parameters[0])->get_fd());
-	send_message(":ft_irc 381 " + cmd.parameters[0] + " :User " + cmd.parameters[0] + " has been kicked from server. Reason : " + cmd.suffix);
+	
+	target = g_server.find_client_by_nick(cmd.parameters[0]);
+	target->send_message(":ft_irc 381 " + cmd.parameters[0] + " :You have been kicked from server : " + cmd.suffix);
+	g_server.kick_user(target->get_fd());
 	return 1;
 }

@@ -54,10 +54,14 @@ void Channel::part_user(int fd_user) {
 }
 
 void Channel::kick_user(int fd_to_kick) {
+	Client *kicked;
+
     if (!is_user(fd_to_kick)) {
         std::cerr << "Couldn't kick user: no such user in channel" << std::endl;
         return;
     }
+	kicked = (*g_server.get_clients().find(fd_to_kick)).second;
+	broadcast(":ft_irc 381 " + _name + " :" + kicked->get_nick() + " has been kicked from channel", fd_to_kick);
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
         if (*it == fd_to_kick) {
             _fds_users.erase(it);
