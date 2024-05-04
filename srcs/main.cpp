@@ -26,7 +26,7 @@ int	main(int ac, char **av)
 
 	if (ac != 3)
 	{
-		std::cerr << "Usage: ./ft_irc <port> <password>" << std::endl;
+		std::cerr << "Usage: ./ircserv <port> <password>" << std::endl;
 		return (84);
 	}
 	signal(SIGINT, handle_quit);

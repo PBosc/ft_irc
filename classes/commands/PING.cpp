@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PING.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:43 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 05:06:48 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/04 17:50:38 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int Client::command_PING(t_command &command)
 {
 	if (command.parameters.size() < 1)
 	{
-		send_message(":ft_irc 461 * PING :Not enough parameters");
+		send_message(":" + get_server_addr() + " 461 * PING :Not enough parameters");
 		return (0);
 	}
 	send_message("PONG " + command.parameters[0]);

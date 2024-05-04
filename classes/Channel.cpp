@@ -9,6 +9,8 @@ Channel::Channel() {
     _is_topic_set = false;
     _key = "";
     _max_users = 0;
+    _is_invite_only = false;
+    _is_operator_only = false;
 }
 
 Channel::Channel(std::string name, int fd_creator) {
@@ -19,6 +21,8 @@ Channel::Channel(std::string name, int fd_creator) {
     _is_topic_set = false;
     _key = "";
     _max_users = 0;
+    _is_invite_only = false;
+    _is_operator_only = false;
 }
 
 Channel::~Channel() { }
@@ -39,7 +43,7 @@ void Channel::add_user(int fd_user) {
         std::cerr << "User already in channel" << std::endl;
 }
 
-void Channel::part_user(int fd_user) {
+void Channel::part_user(int fd_user, const std::string &reason) {
 	Client *leaving;
 
     if (!is_user(fd_user)) {
@@ -48,7 +52,17 @@ void Channel::part_user(int fd_user) {
     }
 
 	leaving = (*g_server.get_clients().find(fd_user)).second;
-	broadcast(":ft_irc 381 " + _name + " :" + leaving->get_nick() + " has left the channel", fd_user);
+    if (!leaving)
+    {
+        std::cerr << "Couldn't part user: no such user in server" << std::endl;
+        return;
+    }
+    std::string message = ":" + leaving->get_nick() + "!" + leaving->get_client() + "@" + leaving->get_addr() + " PART " + _name;
+    if (!reason.empty())
+    {
+        message += " :" + reason;
+    }
+	broadcast(message, -42);
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
         if (*it == fd_user) {
             _fds_users.erase(it);
@@ -67,7 +81,13 @@ void Channel::kick_user(int fd_to_kick) {
     }
 
 	kicked = (*g_server.get_clients().find(fd_to_kick)).second;
-	broadcast(":ft_irc 381 " + _name + " :" + kicked->get_nick() + " has been kicked from channel", fd_to_kick);
+    if (!kicked)
+    {
+        std::cerr << "Couldn't kick user: no such user in server" << std::endl;
+        return;
+    }
+    std::string message(":ft_irc 381 " + _name + " :" + kicked->get_nick() + " has been kicked from channel");
+	broadcast(message, fd_to_kick);
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
         if (*it == fd_to_kick) {
             _fds_users.erase(it);
@@ -167,9 +187,9 @@ bool Channel::get_operator_only(void) const {
     return _is_operator_only;
 }
 
-void Channel::broadcast(std::string message, int emitter) {
+void Channel::broadcast(std::string &message, int emitter) {
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
-        if (*it != emitter) {
+        if (*it != emitter && g_server.get_clients()[*it]) {
             g_server.get_clients()[*it]->send_message(message);
         }
     }

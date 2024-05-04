@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CAP.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:28:59 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 04:29:11 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 17:45:51 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,7 @@ int Client::command_CAP(t_command &command)
 			g_server.kick_user(_fd);
 			return (1);
 		}
-		send_message(":ft_irc 001 " + _nick + " :Welcome to the IRC network, "
-			+ _nick + "!");
+		send_message(":" + get_server_addr() + " 001 " + _nick + " :Welcome to the Internet Relay Network " + _nick + "!" + _user + "@" + get_addr());
 	}
 	else
 		send_message("ERROR :Invalid capability");

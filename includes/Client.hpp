@@ -9,12 +9,12 @@ class Client
   private:
 	int _id, _fd;
 	std::string _nick, _user, _name;
+	struct sockaddr_in	_socket;
 	bool _has_password, _has_nick, _has_Client, _is_identified, _is_operator;
 	std::string _message;
 
   public:
-	Client();
-	Client(int fd, int id);
+	Client(int fd, int id, struct sockaddr_in socket);
 	Client(const Client &obj);
 	Client &operator=(const Client &rhs);
 	bool send_message(const std::string &message);
@@ -50,6 +50,8 @@ class Client
 	int get_fd(void) const;
 	std::string get_nick(void) const;
 	std::string get_client(void) const;
+	std::string get_server_addr(void) const;
+	std::string get_addr(void) const;
 	bool get_identification(void) const;
 	bool is_operator(void);
 	std::string &get_message(void);

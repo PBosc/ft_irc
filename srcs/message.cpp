@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 05:51:05 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 19:10:51 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,10 @@ void	handle_message(int fd)
 	char	buf[BUFFER_SIZE + 1];
 	ssize_t	rc;
 	bool	closed;
-	Client	*client;
 	std::string line;
 
-	client = g_server.get_clients()[fd];
 	closed = false;
-	while (true)
+	while (g_server.get_clients()[fd] && true)
 	{
 		rc = recv(fd, buf, BUFFER_SIZE, 0);
 		if (rc <= 0)
@@ -83,27 +81,28 @@ void	handle_message(int fd)
 				std::cerr << "Error: recv() failed: " << strerror(errno) << std::endl;
 				closed = true;
 			}
-			std::stringstream ss(client->get_message());
+			std::stringstream ss(g_server.get_clients()[fd]->get_message());
 			while (std::getline(ss, line))
 			{
 				std::cout << line << std::endl;
 				t_command cmd;
-				if (line.size() == client->get_message().size())
+				if (line.size() == g_server.get_clients()[fd]->get_message().size())
 					break ;
 				cmd = parse_command(line);
 				std::cout << cmd << std::endl;
 				if (g_server.get_commands().find(cmd.command) != g_server.get_commands().end())
 				{
-					if ((client->*g_server.get_commands()[cmd.command])(cmd))
+					if ((g_server.get_clients()[fd]->*g_server.get_commands()[cmd.command])(cmd))
 						return ;
 				}
 				else
-					(client->*g_server.get_commands()["UNKNOWN"])(cmd);
-				client->get_message().erase(0, line.size() + 1);
+					(g_server.get_clients()[fd]->*g_server.get_commands()["UNKNOWN"])(cmd);
+				if (g_server.get_clients()[fd])
+					g_server.get_clients()[fd]->get_message().erase(0, line.size() + 1);
 			}
 			break ;
 		}
 		buf[rc] = 0;
-		client->get_message().append(buf);
+		g_server.get_clients()[fd]->get_message().append(buf);
 	}
 }

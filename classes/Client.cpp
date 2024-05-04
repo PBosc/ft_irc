@@ -2,22 +2,7 @@
 #include "Client.hpp"
 #include "Server.hpp"
 
-Client::Client()
-{
-	_id = -1;
-	_fd = -1;
-	_nick = "";
-	_user = "";
-	_name = "";
-	_has_password = false;
-	_has_nick = false;
-	_has_Client = false;
-	_is_identified = false;
-	_is_operator = false;
-	_message = "";
-}
-
-Client::Client(int fd, int id)
+Client::Client(int fd, int id, struct sockaddr_in socket)
 {
 	_id = id;
 	_fd = fd;
@@ -30,6 +15,7 @@ Client::Client(int fd, int id)
 	_is_identified = false;
 	_is_operator = false;
 	_message = "";
+	_socket = socket;
 }
 
 Client::Client(const Client &obj)
@@ -45,6 +31,7 @@ Client::Client(const Client &obj)
 	_is_identified = obj._is_identified;
 	_is_operator = obj._is_operator;
 	_message = obj._message;
+	_socket = obj._socket;
 }
 
 Client &Client::operator=(const Client &rhs)
@@ -60,6 +47,7 @@ Client &Client::operator=(const Client &rhs)
 	_is_identified = rhs._is_identified;
 	_is_operator = rhs._is_operator;
 	_message = rhs._message;
+	_socket = rhs._socket;
 	return (*this);
 }
 
@@ -70,15 +58,7 @@ bool Client::can_execute(void) const
 
 bool Client::send_message(const std::string &message)
 {
-	int		rc;
-	try {
-		rc = send(_fd, (message + "\r\n").c_str(), message.length() + 2, 0);
-		return (true);
-	}
-	catch (std::exception &e) {
-		std::cerr << "Error: send() failed: " << e.what() << std::endl;
-		return (false);
-	}
+	return (send(_fd, (message + "\r\n").c_str(), message.length() + 2, MSG_NOSIGNAL) >= 0);
 }
 
 bool Client::remove_channel(std::string channel_name)
@@ -88,7 +68,7 @@ bool Client::remove_channel(std::string channel_name)
 	{
 		if ((*it).second->is_user(_fd))
 		{
-			(*it).second->part_user(_fd);
+			(*it).second->part_user(_fd, "");
 			return (true);
 		}
 	}
@@ -114,6 +94,19 @@ std::string Client::get_nick(void) const
 std::string Client::get_client(void) const
 {
 	return (_user);
+}
+
+std::string Client::get_addr(void) const
+{
+	return (inet_ntoa(_socket.sin_addr));
+}
+
+std::string Client::get_server_addr(void) const
+{
+	struct sockaddr_in local_sin;
+    socklen_t local_sinlen = sizeof(local_sin);
+	getsockname(_fd, (struct sockaddr*)&local_sin, &local_sinlen);
+	return (inet_ntoa(local_sin.sin_addr));
 }
 
 bool Client::get_identification(void) const
@@ -152,6 +145,8 @@ bool	is_already_in_use(std::string nick)
 	for (std::map<int,
 		Client *>::iterator it = g_server.get_clients().begin(); it != g_server.get_clients().end(); it++)
 	{
+		if (!(*it).second)
+			continue;
 		if (nick == (*it).second->get_nick())
 			return (true);
 	}

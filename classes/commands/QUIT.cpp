@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   QUIT.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:48 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 08:23:23 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 18:58:20 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,13 @@
 
 int Client::command_QUIT(t_command &command)
 {
-	if (command.parameters.size() < 1)
+	if (command.suffix.empty())
 	{
-		send_message(":ft_irc 461 * QUIT :Not enough parameters");
+		send_message(":" + get_server_addr() + " 221 * QUIT :Goodbye");
+		g_server.kick_user(_fd);
 		return (0);
 	}
-	send_message(":ft_irc 221 * QUIT :Goodbye");
-	g_server.kick_user(_fd); // TODO changer le message broadcast au channel
+	send_message(":" + get_server_addr() + " 221 * QUIT :" + command.suffix);
+	g_server.kick_user(_fd);
 	return (0);
 }

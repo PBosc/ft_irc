@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:40:32 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 06:08:34 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/04 17:30:32 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ typedef int (Client::*ScriptFunction)(t_command &);
 
 class Server
 {
-
   public:
 	Server(void);
 	~Server(void);
@@ -43,18 +42,17 @@ class Server
 	bool init(int port, std::string password);
 	void run(int &i);
 	void kick_user(int fd);
+
   private:
 	t_epoll _epoll;
 	t_socket _socket;
 	int _port;
 	std::string _password;
-	std::map<std::string, std::string>_operators;
+	std::map<std::string, std::string> _operators;
 	std::map<std::string, Channel *> _channels;
 	std::map<int, Client *> _clients;
 	std::map<std::string, ScriptFunction> _commands;
 	int _clients_id;
-
-
 };
 std::ostream &operator<<(std::ostream &os, Server &server);
 extern Server	g_server;

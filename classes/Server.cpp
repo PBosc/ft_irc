@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 06:08:25 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/04 19:17:23 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,11 @@ Server::~Server(void)
 	std::map<int, Client *>::iterator cl_it;
 	for (cl_it = _clients.begin(); cl_it != _clients.end(); cl_it++)
 	{
-		close (cl_it->second->get_fd());
-		delete cl_it->second;
+		if (cl_it->second)
+		{
+			close (cl_it->second->get_fd());
+			delete cl_it->second;
+		}
 	}
 	std::map<std::string, Channel *>::iterator ch_it;
 	for (ch_it = _channels.begin(); ch_it != _channels.end(); ch_it++)
@@ -207,17 +210,20 @@ void Server::kick_user(int fd)
 	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
 	{
 		if (it->second->is_user(fd))
-			it->second->kick_user(fd);
+		{
+			std::string reason("Disconnected");
+			it->second->part_user(fd, reason);
+		}
 	}
 	delete _clients[fd];
-	_clients.erase(fd);
+	_clients[fd] = NULL;
 	close(fd);
 	std::cout << "User with fd " << fd << " disconnected." << std::endl;
 }
 
 Client *Server::find_client_by_nick(std::string &nick) {
 	for (std::map<int, Client *>::iterator it = g_server.get_clients().begin(); it != g_server.get_clients().end(); it++) {
-		if ((*it).second->get_nick() == nick)
+		if ((*it).second && (*it).second->get_nick() == nick)
 			return (*it).second;
 	}
 	return NULL;
@@ -229,7 +235,7 @@ std::map<std::string, std::string> &Server::get_operators() {
 
 std::ostream &operator<<(std::ostream &os, Server &server)
 {
-	os << "Server port: " << server.get_port() << std::endl;
-	os << "Server password: " << server.get_password() << std::endl;
+	os << "Server listening on: " << inet_ntoa(server.get_socket().addr.sin_addr) << ":" << server.get_port() << std::endl;
+	os << "With password: " << server.get_password() << std::endl;
 	return os;
 }
