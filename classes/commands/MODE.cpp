@@ -6,7 +6,7 @@
 /*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:25 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 07:40:09 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/04 07:47:08 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,6 +210,12 @@ int Client::command_MODE(t_command &command)
 				}
 				client->set_operator(command.parameters[1][0] == '+');
 				client->send_message(":ft_irc 381 * " + command.parameters[0] + " :You're now " + (client->is_operator() ? "an operator" : "not an operator"));
+				return (0);
+			}
+			if (command.parameters[1][1] == 'i')
+			{
+				send_message(":ft_irc 381 * :You're now invisible");
+				return (0);
 			}
 			else
 			{
