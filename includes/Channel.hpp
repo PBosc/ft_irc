@@ -18,11 +18,10 @@ class Channel
 	bool _is_limit_set;
 	unsigned int _limit;
 	bool _is_topic_op_only;
-	bool _is_operator_only;
 
   public:
 	Channel();
-	Channel(std::string name, int fd_creator);
+	Channel(std::string name);
 	~Channel();
 
 	bool is_user(int fd_user);
@@ -41,7 +40,6 @@ class Channel
 	void set_limit(unsigned int limit);
 	void unset_limit();
 	void set_topic_op_only(bool is_topic_op_only);
-	void set_operator_only(bool is_operator_only);
 	void set_oper(int fd, bool oper);
 	bool get_oper(int fd);
 
@@ -55,7 +53,6 @@ class Channel
 	bool get_key_set(void) const;
 	bool get_limit_set(void) const;
 	bool get_topic_op_only(void) const;
-	bool get_operator_only(void) const;
 
 	void broadcast(std::string &message, int emitter);
 };

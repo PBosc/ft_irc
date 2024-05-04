@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   JOIN.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:17 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 20:34:38 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 22:46:02 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int Client::command_JOIN(t_command &command)
 	}
 	if (g_server.get_channels().find(command.parameters[0]) == g_server.get_channels().end())
 	{
-		channel = new Channel(command.parameters[0], _fd);
+		channel = new Channel(command.parameters[0]);
 		g_server.set_channel(command.parameters[0], channel);
 		channel->add_user(_fd);
 		channel->set_oper(_fd, true);
@@ -52,11 +52,6 @@ int Client::command_JOIN(t_command &command)
 	if (channel->get_key() != "" && command.parameters[1] != channel->get_key())
 	{
 		send_message(":" + get_server_addr() + " 475 * " + command.parameters[0] + " :Cannot join channel (+k)");
-		return (0);
-	}
-	if (channel->get_operator_only() && !_is_operator)
-	{
-		send_message(":" + get_server_addr() + " 475 * " + command.parameters[0] + " :You're not operator");
 		return (0);
 	}
 	if (channel->is_user(_fd))

@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 19:10:51 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/04 21:34:58 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ t_command parse_command(std::string line)
 	std::stringstream ss(line);
 	std::string word;
 
+	cmd.has_suffix = false;
 	ss >> word;
 	unsigned long pos = word.find(":");
 	while (pos == word.size() - 1)
@@ -52,11 +53,12 @@ t_command parse_command(std::string line)
 	bool first = true;
 	while (ss)
 	{
+		cmd.has_suffix = true;
 		if (!first)
 			cmd.suffix.append(" ");
-		first = false;
-		if (word[0] == ':')
+		if (first && word[0] == ':')
 			word.erase(0, 1);
+		first = false;
 		cmd.suffix.append(word);
 		ss >> word;
 	}

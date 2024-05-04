@@ -51,7 +51,7 @@ typedef struct s_command
 	std::string command;
 	std::vector<std::string> parameters;
 	std::string suffix;
-	// bool				has_last_param;
+	bool				has_suffix;
 }						t_command;
 
 void					user_connection(void);

@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:25 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 18:53:52 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/04 22:58:45 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 #include "Client.hpp"
 #include "Server.hpp"
 
-void Client::handle_i_mode(t_command &command)
+void Client::handle_i_mode(t_command &command, bool sign)
 {
-	if (command.parameters.size() > 2)
+	if (command.parameters.at(0) == _nick)
 	{
-		send_message(":" + get_server_addr() + " 461 * MODE :Too many parameters");
+		send_message(":" + get_server_addr() + " 381 * :You're now invisible");
 		return ;
 	}
 	Channel *channel = g_server.get_channels()[command.parameters[0]];
@@ -27,30 +27,35 @@ void Client::handle_i_mode(t_command &command)
 		send_message(":" + get_server_addr() + " 442 * " + command.parameters[0] + " :You're not on that channel");
 		return ;
 	}
-	channel->set_invite_only(command.parameters[1][0] == '+');
+	if (!_is_operator && !channel->get_oper(_fd))
+	{
+		send_message(":" + get_server_addr() + " 482 * " + command.parameters[0] + " :You're not operator");
+		return ;
+	}
+	channel->set_invite_only(sign);
 	std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + " +i" + " :is " + (channel->get_invite_only() ? "now" : "not anymore") + " invite only");
 	channel->broadcast(message, -42);
 }
 
-void Client::handle_t_mode(t_command &command)
+void Client::handle_t_mode(t_command &command, bool sign)
 {
-	if (command.parameters.size() > 2)
-	{
-		send_message(":" + get_server_addr() + " 461 * MODE :Too many parameters");
-		return ;
-	}
 	Channel *channel = g_server.get_channels()[command.parameters[0]];
 	if (!channel->is_user(_fd))
 	{
 		send_message(":" + get_server_addr() + " 442 * " + command.parameters[0] + " :You're not on that channel");
 		return ;
 	}
-	channel->set_topic_op_only(command.parameters[1][0] == '+');
-	std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + " +t" + + (channel->get_topic_op_only() ? "now" : "not anymore") + " :is now topic set");
+	if (!_is_operator && !channel->get_oper(_fd))
+	{
+		send_message(":" + get_server_addr() + " 482 * " + command.parameters[0] + " :You're not operator");
+		return ;
+	}
+	channel->set_topic_op_only(sign);
+	std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + " " + command.parameters[0] + " :is " + (channel->get_topic_op_only() ? "now" : "not anymore") + " topic op only");
 	channel->broadcast(message, -42);
 }
 
-void Client::handle_k_mode(t_command &command)
+void Client::handle_k_mode(t_command &command, bool sign, size_t &params)
 {
 	Channel *channel = g_server.get_channels()[command.parameters[0]];
 	if (!channel->is_user(_fd))
@@ -58,26 +63,23 @@ void Client::handle_k_mode(t_command &command)
 		send_message(":" + get_server_addr() + " 442 * " + command.parameters[0] + " :You're not on that channel");
 		return ;
 	}
-	if (command.parameters.size() < 3 && command.parameters[1][0] == '+')
+	if (!_is_operator && !channel->get_oper(_fd))
+	{
+		send_message(":" + get_server_addr() + " 482 * " + command.parameters[0] + " :You're not operator");
+		return ;
+	}
+	if (command.parameters.size() <= params && sign)
 	{
 		send_message(":" + get_server_addr() + " 461 * MODE :Not enough parameters");
 		return ;
 	}
-	if (command.parameters[1][0] == '+')
-	{
-		channel->set_key(command.parameters[2]);
-		std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + " +k" + " :" + command.parameters[2]);
-		channel->broadcast(message, -42);
-	}
-	else if (command.parameters[1][0] == '-')
-	{
-		channel->unset_key();
-		std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + " -k" + " :key removed");
-		channel->broadcast(message, -42);
-	}
+	channel->set_key(command.parameters.at(params));
+	++params;
+	std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + (sign ? " +" : " -") + "k" + " :" + (sign ? command.parameters[2] : "key removed"));
+	channel->broadcast(message, -42);
 }
 
-void Client::handle_l_mode(t_command &command)
+void Client::handle_l_mode(t_command &command, bool sign, size_t &params)
 {
 	Channel *channel = g_server.get_channels()[command.parameters[0]];
 	if (!channel->is_user(_fd))
@@ -85,18 +87,24 @@ void Client::handle_l_mode(t_command &command)
 		send_message(":" + get_server_addr() + " 442 * " + command.parameters[0] + " :You're not on that channel");
 		return ;
 	}
-	if (command.parameters.size() < 3 && command.parameters[1][0] == '+')
+	if (!_is_operator && !channel->get_oper(_fd))
+	{
+		send_message(":" + get_server_addr() + " 482 * " + command.parameters[0] + " :You're not operator");
+		return ;
+	}
+	if (command.parameters.size() < params + 1 && sign)
 	{
 		send_message(":" + get_server_addr() + " 461 * MODE :Not enough parameters");
 		return ;
 	}
-	if (command.parameters[1][0] == '+')
+	if (sign)
 	{
-		channel->set_limit(std::atoi(command.parameters[2].c_str()));
-		std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + " +l" + " :" + command.parameters[2]);
+		channel->set_limit(std::atoi(command.parameters.at(params).c_str()));
+		++params;
+		std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + " +l" + " :" + command.parameters.at(params));
 		channel->broadcast(message, -42);
 	}
-	else if (command.parameters[1][0] == '-')
+	else
 	{
 		channel->unset_limit();
 		std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + " -l" + " :limit removed");
@@ -104,14 +112,8 @@ void Client::handle_l_mode(t_command &command)
 	}
 }
 
-void Client::handle_o_mode(t_command &command)
+void Client::handle_o_mode(t_command &command, bool sign, size_t &params)
 {
-	if (command.parameters.size() > 2)
-	{
-		send_message(":" + get_server_addr() + " 461 * MODE :Too many parameters");
-		std::cout << "too many parameters" << std::endl;
-		return ;
-	}
 	Channel *channel = g_server.get_channels()[command.parameters[0]];
 	if (!channel->is_user(_fd))
 	{
@@ -119,121 +121,73 @@ void Client::handle_o_mode(t_command &command)
 		std::cout << "not on that channel" << std::endl;
 		return ;
 	}
-	if (!_is_operator)
+	if (!_is_operator && !channel->get_oper(_fd))
 	{
 		send_message(":" + get_server_addr() + " 482 * " + command.parameters[0] + " :You're not operator");
 		std::cout << "not operator" << std::endl;
 		return ;
 	}
-	channel->set_operator_only(command.parameters[1][0] == '+');
-	std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + " +o" + " :is " + (channel->get_operator_only() ? "now" : "not anymore") + " operator only");
-	channel->broadcast(message, -42);
+	if (command.parameters.size() <= params)
+	{
+		send_message(":" + get_server_addr() + " 461 * MODE :Not enough parameters");
+		std::cout << "not enough parameters" << std::endl;
+		return ;
+	}
+	int	fd;
+	for (size_t index = 0; index < channel->get_users().size(); ++index)
+	{
+		fd = channel->get_users().at(index);
+		if (g_server.get_clients()[fd]->get_nick() == command.parameters.at(params))
+		{
+			channel->set_oper(fd, sign);
+			std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + (sign ? " +" : " -") + "o" + " :" + g_server.get_clients()[fd]->get_nick() + (sign ? " is now an operator" : " is not an operator anymore"));
+			channel->broadcast(message, -42);
+			return ;
+		}
+	}
 }
 
 int Client::command_MODE(t_command &command)
 {
-	if (command.parameters.size() < 1)
+	size_t	params;
+	bool	sign;
+	if (command.parameters.size() < 2)
 	{
 		send_message(":" + get_server_addr() + " 461 * MODE :Not enough parameters");
 		return (0);
 	}
-	if (command.parameters.size() == 1)
-	{
-		if (command.parameters[0][0] == '#')
-		{
-			if (g_server.get_channels().find(command.parameters[0]) == g_server.get_channels().end())
-			{
-				send_message(":" + get_server_addr() + " 403 * " + command.parameters[0] + " :No such channel");
-				return (0);
-			}
-			else
-			{
-				send_message(":" + get_server_addr() + " 324 * " + command.parameters[0] + " +" 
-				+ (g_server.get_channels()[command.parameters[0]]->get_invite_only() ? "i" : "") 
-				+ (g_server.get_channels()[command.parameters[0]]->get_topic_set() ? "t" : "") 
-				+ (g_server.get_channels()[command.parameters[0]]->get_key_set() ? "k" : "") 
-				+ (g_server.get_channels()[command.parameters[0]]->get_limit_set() ? "l" : ""));
-				return (0);
-			}
-		}
-		else
-		{
-			send_message(":" + get_server_addr() + " 461 * MODE :Missing channel name");
-			return (0);
-		}
-		return (0);
-	}
 	else
 	{
-		if (command.parameters[1][0] == '+' || command.parameters[1][0] == '-')
-		{
-			if (command.parameters[0][0] == '#')
-			{
-				if (g_server.get_channels().find(command.parameters[0]) == g_server.get_channels().end())
-				{
-					send_message(":" + get_server_addr() + " 403 * " + command.parameters[0] + " :No such channel");
-					return (0);
-				}
-				Channel *channel = g_server.get_channels()[command.parameters[0]];
-				if (!channel->is_user(_fd))
-				{
-					send_message(":" + get_server_addr() + " 442 * " + command.parameters[0] + " :You're not on that channel");
-					return (0);
-				}
-				if (command.parameters[1].size() == 1)
-				{
-					send_message(":" + get_server_addr() + " 461 * MODE :Not enough parameters");
-					return (0);
-				}
-				if (command.parameters[1][1] == 'i')
-					handle_i_mode(command);
-				else if (command.parameters[1][1] == 't')
-					handle_t_mode(command);
-				else if (command.parameters[1][1] == 'k')
-					handle_k_mode(command);
-				else if (command.parameters[1][1] == 'l')
-					handle_l_mode(command);
-				else if (command.parameters[1][1] == 'o')
-					handle_o_mode(command);
-				else
-				{
-					send_message(":" + get_server_addr() + " 461 * MODE :Invalid mode");
-					return (0);
-				}
-				return (0);
-			}
-			if (command.parameters[1][1] == 'o')
-			{
-				if (g_server.find_client_by_nick(command.parameters[0]) == NULL)
-				{
-					send_message(":" + get_server_addr() + " 401 * " + command.parameters[0] + " :No such nick");
-					return (0);
-				}
-				Client *client = g_server.find_client_by_nick(command.parameters[0]);
-				if (!_is_operator)
-				{
-					send_message(":" + get_server_addr() + " 482 * " + command.parameters[0] + " :You're not operator");
-					return (0);
-				}
-				client->set_operator(command.parameters[1][0] == '+');
-				client->send_message(":" + client->get_server_addr() + " 381 * " + command.parameters[0] + " :You're now " + (client->is_operator() ? "an operator" : "not an operator"));
-				return (0);
-			}
-			if (command.parameters[1][1] == 'i')
-			{
-				send_message(":" + get_server_addr() + " 381 * :You're now invisible");
-				return (0);
-			}
-			else
-			{
-				send_message(":" + get_server_addr() + " 461 * MODE :Invalid channel name");
-				return (0);
-			}
-		}
-		else
+		if (command.parameters.at(1).at(0) != '+' && command.parameters.at(1).at(0) != '-')
 		{
 			send_message(":" + get_server_addr() + " 461 * MODE :Invalid mode");
 			return (0);
+		}
+		sign = command.parameters.at(1).at(0) == '+';
+		params = 2;
+		for (std::string::iterator it = command.parameters[1].begin() + 1; it != command.parameters[1].end(); it++)
+		{
+			switch (*it) 
+			{
+				case 'i':
+					handle_i_mode(command, sign);
+					break;
+				case 't':
+					handle_t_mode(command, sign);
+					break;
+				case 'k':
+					handle_k_mode(command, sign, params);
+					break;
+				case 'l':
+					handle_l_mode(command, sign, params);
+					break;
+				case 'o':
+					handle_o_mode(command, sign, params);
+					break;
+				default:
+					send_message(":" + get_server_addr() + " 461 * MODE :Invalid mode");
+					return (0);
+			}
 		}
 	}
 	return (0);

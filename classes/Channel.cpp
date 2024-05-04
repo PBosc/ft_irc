@@ -10,19 +10,22 @@ Channel::Channel() {
     _key = "";
     _max_users = 0;
     _is_invite_only = false;
-    _is_operator_only = false;
+    _is_key_set = false;
+    _is_topic_op_only = false;
+    _is_limit_set = false;
 }
 
-Channel::Channel(std::string name, int fd_creator) {
+Channel::Channel(std::string name) {
     _name = name;
     _fds_users = std::vector<int>();
-    _fds_users.push_back(fd_creator);
     _topic = "";
     _is_topic_set = false;
     _key = "";
     _max_users = 0;
     _is_invite_only = false;
-    _is_operator_only = false;
+    _is_key_set = false;
+    _is_topic_op_only = false;
+    _is_limit_set = false;
 }
 
 Channel::~Channel() { }
@@ -89,7 +92,7 @@ void Channel::kick_user(int fd_to_kick) {
         std::cerr << "Couldn't kick user: no such user in server" << std::endl;
         return;
     }
-    std::string message(":ft_irc 381 " + _name + " :" + kicked->get_nick() + " has been kicked from channel");
+    std::string message(":" + kicked->get_server_addr() + " 381 " + _name + " :" + kicked->get_nick() + " has been kicked from channel");
 	broadcast(message, fd_to_kick);
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
         if (*it == fd_to_kick) {
@@ -125,10 +128,6 @@ void Channel::set_invite_only(bool is_invite_only) {
 void Channel::set_key(std::string key) {
     _key = key;
     _is_key_set = true;
-}
-
-void Channel::set_operator_only(bool is_operator_only) {
-    _is_operator_only = is_operator_only;
 }
 
 void Channel::unset_key() {
@@ -184,10 +183,6 @@ bool Channel::get_limit_set(void) const {
 
 bool Channel::get_topic_op_only(void) const {
     return _is_topic_op_only;
-}
-
-bool Channel::get_operator_only(void) const {
-    return _is_operator_only;
 }
 
 void Channel::set_oper(int fd, bool oper)

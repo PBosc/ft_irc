@@ -37,11 +37,11 @@ class Client
 	int command_INVITE(t_command &command);
 	int command_unknown(t_command &command);
 
-	void handle_i_mode(t_command &command);
-	void handle_t_mode(t_command &command);
-	void handle_k_mode(t_command &command);
-	void handle_o_mode(t_command &command);
-	void handle_l_mode(t_command &command);
+	void handle_i_mode(t_command &command, bool sign);
+	void handle_t_mode(t_command &command, bool sign);
+	void handle_k_mode(t_command &command, bool sign, size_t &params);
+	void handle_o_mode(t_command &command, bool sign, size_t &params);
+	void handle_l_mode(t_command &command, bool sign, size_t &params);
 
 	bool can_execute(void) const;
 

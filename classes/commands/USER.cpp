@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:58 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 17:51:56 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/04 21:28:46 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int Client::command_USER(t_command &command)
 {
 	if (_has_Client)
 	{
-		send_message(":" + get_server_addr() + " 462 * USER :You are already reregistered");
+		send_message(":" + get_server_addr() + " 462 * USER :You are already registered");
 		return (0);
 	}
 	if (command.parameters.size() < 1)
