@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   QUIT.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:48 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 04:32:11 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 05:05:31 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,10 @@ int Client::command_QUIT(t_command &command)
 {
 	if (command.parameters.size() < 1)
 	{
-		send_message("ERROR :No quit message given");
+		send_message(":ft_irc 461 * QUIT :Not enough parameters");
 		return (0);
 	}
-	send_message("ERROR :Closing connection: " + command.parameters[0]);
+	send_message(":ft_irc 221 * QUIT :Goodbye");
+	g_server.kick_user(_fd);
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   UNKNOWN.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:53 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 04:33:53 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 05:01:06 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,6 @@
 
 int Client::command_unknown(t_command &command)
 {
-	send_message("ERROR :Unknown command " + command.command);
+	send_message(":ft_irc 421 * " + command.command + " :Unknown command");
 	return 0;
 }

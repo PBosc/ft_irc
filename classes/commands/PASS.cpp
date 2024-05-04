@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PASS.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:41 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 04:30:24 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 05:07:45 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,17 @@ int Client::command_PASS(t_command &command)
 {
 	if (command.parameters.size() < 1)
 	{
-		send_message("ERROR :No password given");
+		send_message(":ft_irc 461 * PASS :Not enough parameters");
 		return (0);
 	}
 	if (_has_password)
 	{
-		send_message("ERROR :You have already set your password");
+		send_message(":ft_irc 462 * PASS :You already registered");
 		return (0);
 	}
 	if (command.parameters[0] != g_server.get_password())
 	{
-		send_message("ERROR :Invalid password");
+		send_message(":ft_irc 464 * PASS :Password incorrect");
 		return (0);
 	}
 	_has_password = true;

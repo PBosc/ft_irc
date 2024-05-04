@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   USER.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:58 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 04:30:54 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 05:00:57 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@ int Client::command_USER(t_command &command)
 {
 	if (_has_Client)
 	{
-		send_message("ERROR :You have already set your Client");
+		send_message(":ft_irc 462 * USER :You are already reregistered");
 		return (0);
 	}
 	if (command.parameters.size() < 1)
 	{
-		send_message("ERROR :No Client given");
+		send_message(":ft_irc 461 * USER :Not enough parameters");
 		return (0);
 	}
 	_user = command.parameters[0];

@@ -1,2 +1,23 @@
--dcc ne marche pas
--faire les commandes restantes et gerer les cas pour les commandes deja implementees
+DONE : 
+CAP ?
+NICK
+NOTICE
+OPER
+PRIVMSG
+
+
+TO DO / REDO : 
+
+INVITE
+JOIN
+KICK
+KILL
+MODE
+NAMES
+PART
+PASS
+PING
+QUIT
+TOPIC
+UNKNOWN
+USER
