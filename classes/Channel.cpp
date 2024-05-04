@@ -40,10 +40,15 @@ void Channel::add_user(int fd_user) {
 }
 
 void Channel::part_user(int fd_user) {
+	Client *leaving;
+
     if (!is_user(fd_user)) {
         std::cerr << "Couldn't part user: no such user in channel" << std::endl;
         return;
     }
+
+	leaving = (*g_server.get_clients().find(fd_user)).second;
+	broadcast(":ft_irc 381 " + _name + " :" + leaving->get_nick() + " has left the channel", fd_user);
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
         if (*it == fd_user) {
             _fds_users.erase(it);
@@ -60,6 +65,7 @@ void Channel::kick_user(int fd_to_kick) {
         std::cerr << "Couldn't kick user: no such user in channel" << std::endl;
         return;
     }
+
 	kicked = (*g_server.get_clients().find(fd_to_kick)).second;
 	broadcast(":ft_irc 381 " + _name + " :" + kicked->get_nick() + " has been kicked from channel", fd_to_kick);
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
