@@ -38,7 +38,10 @@ bool Channel::is_user(int fd_user) {
 
 void Channel::add_user(int fd_user) {
     if (!is_user(fd_user))
+	{
         _fds_users.push_back(fd_user);
+		_fds_operators[fd_user] = false;
+	}
     else
         std::cerr << "User already in channel" << std::endl;
 }
@@ -185,6 +188,16 @@ bool Channel::get_topic_op_only(void) const {
 
 bool Channel::get_operator_only(void) const {
     return _is_operator_only;
+}
+
+void Channel::set_oper(int fd, bool oper)
+{
+	_fds_operators[fd] = oper;
+}
+
+bool Channel::get_oper(int fd)
+{
+	return (_fds_operators[fd]);
 }
 
 void Channel::broadcast(std::string &message, int emitter) {

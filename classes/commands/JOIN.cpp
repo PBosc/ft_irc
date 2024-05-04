@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   JOIN.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:17 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 18:46:59 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/04 20:34:38 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,15 @@ int Client::command_JOIN(t_command &command)
 		return (0);
 	}
 	if (g_server.get_channels().find(command.parameters[0]) == g_server.get_channels().end())
-		g_server.get_channels()[command.parameters[0]] = new Channel(command.parameters[0],
-				_fd);
+	{
+		channel = new Channel(command.parameters[0], _fd);
+		g_server.set_channel(command.parameters[0], channel);
+		channel->add_user(_fd);
+		channel->set_oper(_fd, true);
+		std::string message = ":" + _nick + "!" + _user + "@" + get_addr() + " JOIN " + command.parameters[0];
+		send_message(message);
+		return (0);
+	}
 	channel = g_server.get_channels()[command.parameters[0]];
 	if (channel->get_invite_only())
 	{

@@ -8,6 +8,7 @@ class Channel
   private:
 	std::string _name;
 	std::vector<int> _fds_users;
+	std::map<int, bool> _fds_operators;
 	std::string _topic;
 	bool _is_topic_set;
 	std::string _key;
@@ -41,6 +42,8 @@ class Channel
 	void unset_limit();
 	void set_topic_op_only(bool is_topic_op_only);
 	void set_operator_only(bool is_operator_only);
+	void set_oper(int fd, bool oper);
+	bool get_oper(int fd);
 
 	std::string get_name(void) const;
 	std::vector<int> get_users(void) const;

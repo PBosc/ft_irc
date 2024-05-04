@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 19:17:23 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/04 20:22:14 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ bool Server::init(int port, std::string password)
 	_commands["PART"] = &Client::command_PART;
 	_commands["KICK"] = &Client::command_KICK;
 	_commands["KILL"] = &Client::command_KILL;
-	_commands["OPER"] = &Client::command_OPER;
+	// _commands["OPER"] = &Client::command_OPER;
 	_commands["MODE"] = &Client::command_MODE;
 	_commands["TOPIC"] = &Client::command_TOPIC;
 	_commands["NOTICE"] = &Client::command_NOTICE;
