@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:40:32 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 17:30:32 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/04 23:37:49 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,12 @@ class Server
 	bool init(int port, std::string password);
 	void run(int &i);
 	void kick_user(int fd);
+	std::vector<std::string> &get_ban_words(void);
+	void add_ban_word(std::string &word);
+	bool remove_ban_word(std::string &word);
+	std::map<std::string, std::string> &get_bot_responses(void);
+	void add_bot_response(std::string &trigger, std::string &response);
+	size_t remove_bot_response(std::string &trigger);
 
   private:
 	t_epoll _epoll;
@@ -53,6 +59,8 @@ class Server
 	std::map<int, Client *> _clients;
 	std::map<std::string, ScriptFunction> _commands;
 	int _clients_id;
+	std::map <std::string, std::string> _bot_responses;
+	std::vector<std::string> _ban_words;
 };
 std::ostream &operator<<(std::ostream &os, Server &server);
 extern Server	g_server;

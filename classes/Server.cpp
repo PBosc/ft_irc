@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 20:22:14 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 23:41:16 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ bool Server::init(int port, std::string password)
 	_commands["PART"] = &Client::command_PART;
 	_commands["KICK"] = &Client::command_KICK;
 	_commands["KILL"] = &Client::command_KILL;
-	// _commands["OPER"] = &Client::command_OPER;
+	_commands["OPER"] = &Client::command_OPER;
 	_commands["MODE"] = &Client::command_MODE;
 	_commands["TOPIC"] = &Client::command_TOPIC;
 	_commands["NOTICE"] = &Client::command_NOTICE;
@@ -231,6 +231,36 @@ Client *Server::find_client_by_nick(std::string &nick) {
 
 std::map<std::string, std::string> &Server::get_operators() {
 	return _operators;
+}
+
+void Server::add_ban_word(std::string &word) {
+    _ban_words.push_back(word);
+}
+
+void Server::add_bot_response(std::string &trigger, std::string &response) {
+    _bot_responses[trigger] = response;
+}
+
+bool Server::remove_ban_word(std::string &word) {
+    for (std::vector<std::string>::iterator it = _ban_words.begin(); it != _ban_words.end(); it++) {
+        if (*it == word) {
+            _ban_words.erase(it);
+            return true;
+        }
+    }
+    return (false);
+}
+
+std::vector<std::string> &Server::get_ban_words(void) {
+    return _ban_words;
+}
+
+std::map<std::string, std::string> &Server::get_bot_responses(void) {
+    return _bot_responses;
+}
+
+size_t Server::remove_bot_response(std::string &trigger) {
+    return (_bot_responses.erase(trigger));
 }
 
 std::ostream &operator<<(std::ostream &os, Server &server)

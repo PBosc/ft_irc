@@ -53,7 +53,6 @@ class Channel
 	bool get_key_set(void) const;
 	bool get_limit_set(void) const;
 	bool get_topic_op_only(void) const;
-
 	void broadcast(std::string &message, int emitter);
 };
 
