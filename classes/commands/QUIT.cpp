@@ -6,7 +6,7 @@
 /*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:48 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 08:20:34 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 08:23:23 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,6 @@ int Client::command_QUIT(t_command &command)
 		return (0);
 	}
 	send_message(":ft_irc 221 * QUIT :Goodbye");
-	g_server.kick_user(_fd);
+	g_server.kick_user(_fd); // TODO changer le message broadcast au channel
 	return (0);
 }
