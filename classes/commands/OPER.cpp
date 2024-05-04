@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   OPER.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:35 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 04:37:49 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/04 04:57:05 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int Client::command_OPER(t_command &cmd)
 {
 	if (!_has_password || !_has_Client || !_has_nick)
 	{
-		send_message("ERROR :You must set your password, nick and user before becoming an operator");
+		send_message(":ft_irc 451 * OPER :You have not registered");
 		return (0);
 	}
 	if (!is_nick_valid(cmd.parameters[0])) {
