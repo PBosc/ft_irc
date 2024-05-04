@@ -72,6 +72,10 @@ void Channel::set_topic(std::string topic) {
     _is_topic_set = true;
 }
 
+void Channel::set_topic_op_only(bool is_topic_op_only) {
+    _is_topic_op_only = is_topic_op_only;
+}
+
 void Channel::unset_topic() {
     _topic = "";
     _is_topic_set = false;
@@ -79,6 +83,34 @@ void Channel::unset_topic() {
 
 void Channel::set_max_users(int max_users) {
     _max_users = max_users;
+}
+
+void Channel::set_invite_only(bool is_invite_only) {
+    _is_invite_only = is_invite_only;
+}
+
+void Channel::set_key(std::string key) {
+    _key = key;
+    _is_key_set = true;
+}
+
+void Channel::set_operator_only(bool is_operator_only) {
+    _is_operator_only = is_operator_only;
+}
+
+void Channel::unset_key() {
+    _key = "";
+    _is_key_set = false;
+}
+
+void Channel::set_limit(unsigned int limit) {
+    _limit = limit;
+    _is_limit_set = true;
+}
+
+void Channel::unset_limit() {
+    _limit = 0;
+    _is_limit_set = false;
 }
 
 std::string Channel::get_name(void) const {
@@ -103,6 +135,26 @@ std::string Channel::get_key(void) const {
 
 unsigned int Channel::get_user_limit(void) const {
     return _max_users;
+}
+
+bool Channel::get_invite_only(void) const {
+    return _is_invite_only;
+}
+
+bool Channel::get_key_set(void) const {
+    return _is_key_set;
+}
+
+bool Channel::get_limit_set(void) const {
+    return _is_limit_set;
+}
+
+bool Channel::get_topic_op_only(void) const {
+    return _is_topic_op_only;
+}
+
+bool Channel::get_operator_only(void) const {
+    return _is_operator_only;
 }
 
 void Channel::broadcast(std::string message, int emitter) {

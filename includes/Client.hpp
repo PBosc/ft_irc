@@ -37,6 +37,12 @@ class Client
 	int command_INVITE(t_command &command);
 	int command_unknown(t_command &command);
 
+	void handle_i_mode(t_command &command);
+	void handle_t_mode(t_command &command);
+	void handle_k_mode(t_command &command);
+	void handle_o_mode(t_command &command);
+	void handle_l_mode(t_command &command);
+
 	bool can_execute(void) const;
 
 	bool remove_channel(std::string channel_name);

@@ -6,7 +6,7 @@
 /*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:50 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 05:01:44 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/04 06:57:04 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,12 @@ int Client::command_TOPIC(t_command &command)
 		send_message(":ft_irc 442 * " + command.parameters[0] + " :You're not on that channel");
 		return (0);
 	}
+	if (channel->get_topic_op_only() && !_is_operator)
+	{
+		send_message(":ft_irc 482 * " + command.parameters[0] + " :You're not operator");
+		return (0);
+	}
 	channel->set_topic(command.parameters[1]);
+	channel->broadcast(":" + _nick + " TOPIC " + command.parameters[0] + " :" + command.parameters[1], -42);
 	return 0;
 }
