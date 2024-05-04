@@ -6,7 +6,7 @@
 /*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 02:29:58 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/04 03:12:59 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,15 @@ t_command parse_command(std::string line)
 	{
 		cmd.parameters.push_back(word);
 	}
+	bool first = true;
 	while (ss)
 	{
+		if (!first)
+			cmd.suffix.append(" ");
+		first = false;
+		if (word[0] == ':')
+			word.erase(0, 1);
 		cmd.suffix.append(word);
-		cmd.suffix.append(" ");
 		ss >> word;
 	}
 	return (cmd);

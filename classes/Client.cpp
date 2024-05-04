@@ -374,8 +374,7 @@ int Client::command_PRIVMSG(t_command &command)
 				+ command.parameters[0]);
 			return (0);
 		}
-		std::string message = ":" + _nick
-			+ " PRIVMSG " + command.parameters[0] + " :" + command.suffix;
+		std::string message = ":" + _nick + "!" + _user + "@" + "localhost" + " PRIVMSG " + command.parameters[0] + " :" + command.suffix;
 		channel->broadcast(message, _fd);
 		return (0);
 	}
@@ -385,8 +384,10 @@ int Client::command_PRIVMSG(t_command &command)
 		if ((*it).second->get_nick() == command.parameters[0])
 		{
 			std::cout << "" << std::endl;
-			(*it).second->send_message(":" + _nick
-				+ " PRIVMSG " + command.parameters[0] + " :" + command.suffix);
+			std::stringstream ss(command.suffix);
+			std::string first_word;
+			ss >> first_word;
+			(*it).second->send_message(":" + _nick + "!" + _user + "@" + "localhost" + " PRIVMSG " + command.parameters[0] + " :" + command.suffix + "\r\n");
 			return (0);
 		}
 	}
