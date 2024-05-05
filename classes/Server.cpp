@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/05 18:04:26 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/05 19:24:20 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ bool Server::init(int port, std::string password)
 	_commands["TOPIC"] = &Client::command_TOPIC;
 	_commands["NOTICE"] = &Client::command_NOTICE;
 	_commands["INVITE"] = &Client::command_INVITE;
-	_commands["WHO"] = &Client::command_WHO;
+	// _commands["WHO"] = &Client::command_WHO;
 	_commands["UNKNOWN"] = &Client::command_unknown;
 	_socket.fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socket.fd < 0)
@@ -228,7 +228,7 @@ void Server::kick_user(int fd)
 		if (it->second->is_user(fd))
 		{
 			std::string reason("Disconnected");
-			it->second->part_user(fd, reason);
+			it->second->part_user(fd, reason, true);
 		}
 		if (!it->second->get_users().size())
 		{

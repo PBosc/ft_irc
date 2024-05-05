@@ -37,7 +37,7 @@ bool Client::remove_channel(std::string channel_name)
 	{
 		if ((*it).second->is_user(_fd))
 		{
-			(*it).second->part_user(_fd, "");
+			(*it).second->part_user(_fd, "", true);
 			return (true);
 		}
 	}

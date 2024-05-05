@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:38 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 18:45:04 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 19:24:56 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int Client::command_PART(t_command &command)
 			send_message(":" + get_server_addr() + " 442 * " + chan + " :You're not on that channel");
 			return (0);
 		}
-		channel->part_user(_fd, command.suffix);
+		channel->part_user(_fd, command.suffix, false);
 	}
 	return (0);
 }

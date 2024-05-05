@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   INVITE.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:13 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 02:33:59 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/05 19:17:40 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ int Client::command_INVITE(t_command &cmd)
 		send_message(":" + get_server_addr() + " 501 * :User already in channel");
 		return 0;
 	}
-	send_message(":" + get_server_addr() + " 341 " + _nick + " " + user->get_nick() + " " + channel->get_name() + ": inviting " + user->get_nick() + " to " + channel->get_name());
+	send_message(":" + get_server_addr() + " 341" + _nick + " " + user->get_nick() + " " + channel->get_name());
 	channel->invite(user->get_fd(), user);
-	user->send_message(":" + _nick + " INVITE " + user->get_nick() + " " + channel->get_name());
+	user->send_message(":" + _nick + "!" + _user + "@" + get_addr() + " INVITE " + user->get_nick() + " " + channel->get_name());
 	return 1;
 }

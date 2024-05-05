@@ -51,7 +51,7 @@ void Channel::add_user(int fd_user) {
         std::cerr << "User already in channel" << std::endl;
 }
 
-void Channel::part_user(int fd_user, const std::string &reason) {
+void Channel::part_user(int fd_user, const std::string &reason, bool iterator) {
 	Client *leaving;
 
     if (!is_user(fd_user)) {
@@ -76,6 +76,11 @@ void Channel::part_user(int fd_user, const std::string &reason) {
 
             _fds_users.erase(it);
 			if (_fds_users.size() == 0) {
+                if (!iterator)
+                {
+                    g_server.get_channels().erase(_name);
+                    delete this;
+                }
 				return ;
 			}
 			if (_fds_operators[fd_user] && op_count() == 1) {
@@ -232,7 +237,7 @@ bool Channel::get_oper(int fd)
 	return (_fds_operators[fd]);
 }
 
-std::map<int, Client *> Channel::get_invited() const {
+std::map<int, Client *> &Channel::get_invited() {
 	return _invited_users;
 }
 

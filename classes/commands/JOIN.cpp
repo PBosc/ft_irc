@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:17 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 16:21:48 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 19:29:18 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ int Client::command_JOIN(t_command &command)
 		return (0);
 	}
 	channel->add_user(_fd);
+	channel->get_invited().erase(_fd);
 	std::string message = ":" + _nick + "!" + _user + "@" + get_addr() + " JOIN " + command.parameters[0];
 	channel->broadcast(message, -42);
 	std::string names = "";

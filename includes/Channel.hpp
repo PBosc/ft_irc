@@ -30,7 +30,7 @@ class Channel
 	void add_user(int fd_user);
 	void kick_user(int fd_to_kick);
 	void disconnect_user(int fd_to_disconnect);
-	void part_user(int fd_user, const std::string &reason);
+	void part_user(int fd_user, const std::string &reason, bool iterator);
 	void invite(int fd_invited, Client *client);
 	int op_count(void);
 
@@ -56,7 +56,7 @@ class Channel
 	bool get_key_set(void) const;
 	bool get_limit_set(void) const;
 	bool get_topic_op_only(void) const;
-	std::map<int, Client *> get_invited() const;
+	std::map<int, Client *> &get_invited();
 
 	void broadcast(std::string &message, int emitter);
 };
