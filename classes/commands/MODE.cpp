@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:25 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 20:35:37 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 22:49:47 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,10 @@ int Client::command_MODE(t_command &command)
 {
 	size_t	params;
 	bool	sign;
+	if (!can_execute()) {
+		send_message(":" + get_server_addr() + " 451 * KILL :You have not registered");
+		return 1;
+	}
 	if (!command.parameters.size())
 	{
 		send_message(":" + get_server_addr() + " 461 * MODE :Not enough parameters");
@@ -175,7 +179,7 @@ int Client::command_MODE(t_command &command)
 					send_message(":" + get_server_addr() + " 403 * " + command.parameters[0] + " :No such channel");
 					return (0);
 				}
-				send_message(":" + get_server_addr() + " 324 * " + command.parameters[0] + " +" + (channel->get_invite_only() ? "i" : "") + (channel->get_topic_op_only() ? "t" : "") + (channel->get_key_set() ? "k": "") + (channel->get_limit_set() ? "l" : ""));
+				send_message(":" + get_server_addr() + " 324 * " + command.parameters[0] + " +" + (channel->get_invite_only() ? "i" : "") + (channel->get_topic_op_only() ? "t" : "") + (channel->get_key().length() ? "k": "") + (channel->get_limit_set() ? "l" : ""));
 			}
 		}
 		if (command.parameters.size() >= 2 && command.parameters.at(0) == _nick)

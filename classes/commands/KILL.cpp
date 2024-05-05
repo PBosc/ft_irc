@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   KILL.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:22 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 02:53:07 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/05 22:09:38 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,11 @@ int Client::command_KILL(t_command &cmd)
 		send_message(":" + get_server_addr() + " 501 * :There is no such user");
 		return 0;
 	}
-	
+	if (cmd.parameters[0] == _nick)
+	{
+		send_message(":" + get_server_addr() + " 501 * :You can't kill yourself");
+		return (0);
+	}
 	target = g_server.find_client_by_nick(cmd.parameters[0]);
 	target->send_message(":" + target->get_server_addr() + " 381 " + cmd.parameters[0] + " :You have been kicked from server : " + cmd.suffix);
 	g_server.kick_user(target->get_fd());

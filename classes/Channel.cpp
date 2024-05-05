@@ -2,29 +2,15 @@
 #include "Client.hpp"
 #include "Server.hpp"
 
-Channel::Channel() {
-    _name = "";
-    _fds_users = std::vector<int>();
-    _topic = "";
-    _is_topic_set = false;
-    _key = "";
-    _max_users = 0;
-    _is_invite_only = false;
-    _is_key_set = false;
-    _is_topic_op_only = false;
-    _is_limit_set = false;
-    _limit = 0;
-}
-
-Channel::Channel(std::string name) {
+Channel::Channel(std::string &name, std::string &pass) {
     _name = name;
     _fds_users = std::vector<int>();
     _topic = "";
     _is_topic_set = false;
-    _key = "";
     _max_users = 0;
     _is_invite_only = false;
-    _is_key_set = false;
+    _key = pass;
+    // _is_key_set = false;
     _is_topic_op_only = false;
     _is_limit_set = false;
     _limit = 0;
@@ -95,7 +81,7 @@ void Channel::part_user(int fd_user, const std::string &reason, bool iterator) {
     std::cerr << "Error while parting user from channel" << std::endl;
 }
 
-void Channel::kick_user(int fd_to_kick) {
+void Channel::kick_user(int fd_to_kick, const std::string &reason, bool iterator, Client *client) {
 	Client *kicked;
 
     if (!is_user(fd_to_kick)) {
@@ -109,13 +95,18 @@ void Channel::kick_user(int fd_to_kick) {
         std::cerr << "Couldn't kick user: no such user in server" << std::endl;
         return;
     }
-    std::string message(":" + kicked->get_server_addr() + " 381 " + _name + " :" + kicked->get_nick() + " has been kicked from channel");
-	broadcast(message, fd_to_kick);
+    std::string message(":" + client->get_nick() + "!" + client->get_client() + "@" + client->get_addr() + " KICK " + _name + " " + kicked->get_nick() + " " + reason);
+	broadcast(message, -42);
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
         if (*it == fd_to_kick) {
 
             _fds_users.erase(it);
 			if (_fds_users.size() == 0) {
+                if (!iterator)
+                {
+                    g_server.get_channels().erase(_name);
+                    delete this;
+                }
 				return ;
 			}
 			if (_fds_operators[fd_to_kick] && op_count() == 1) {
@@ -171,12 +162,12 @@ void Channel::set_invite_only(bool is_invite_only) {
 
 void Channel::set_key(std::string key) {
     _key = key;
-    _is_key_set = true;
+    // _is_key_set = true;
 }
 
 void Channel::unset_key() {
     _key = "";
-    _is_key_set = false;
+    // _is_key_set = false;
 }
 
 void Channel::set_limit(unsigned int limit) {
@@ -217,9 +208,9 @@ bool Channel::get_invite_only(void) const {
     return _is_invite_only;
 }
 
-bool Channel::get_key_set(void) const {
-    return _is_key_set;
-}
+// bool Channel::get_key_set(void) const {
+//     return _is_key_set;
+// }
 
 bool Channel::get_limit_set(void) const {
     return _is_limit_set;

@@ -26,19 +26,16 @@
 # include <utility>
 # include <vector>
 
+# define RESET "\033[0m"
 
-#define RESET   "\033[0m"
-
-#define BLACK   "\033[30m"
-#define RED     "\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define BLUE    "\033[34m"
-#define MAGENTA "\033[35m"
-#define CYAN    "\033[36m"
-#define WHITE   "\033[37m"
-
-
+# define BLACK "\033[30m"
+# define RED "\033[31m"
+# define GREEN "\033[32m"
+# define YELLOW "\033[33m"
+# define BLUE "\033[34m"
+# define MAGENTA "\033[35m"
+# define CYAN "\033[36m"
+# define WHITE "\033[37m"
 
 # define MAX_CONNECTIONS 10
 # define BUFFER_SIZE 4096
@@ -66,6 +63,7 @@ typedef struct s_command
 	std::vector<std::string> parameters;
 	std::string suffix;
 	bool				has_suffix;
+	std::vector<std::string> cmds;
 }						t_command;
 
 void					user_connection(void);

@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:13 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 19:45:31 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 22:28:23 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int Client::command_INVITE(t_command &cmd)
 		send_message(":" + get_server_addr() + " 501 * :Channel is not invite only");
 		return 0;
 	}
-	send_message(":" + get_server_addr() + " 341" + _nick + " " + user->get_nick() + " " + channel->get_name());
+	send_message(":" + get_server_addr() + " 341 " + _nick + " " + user->get_nick() + " " + channel->get_name());
 	channel->invite(user->get_fd(), user);
 	user->send_message(":" + _nick + "!" + _user + "@" + get_addr() + " INVITE " + user->get_nick() + " " + channel->get_name());
 	return 1;

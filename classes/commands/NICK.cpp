@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:30 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 20:57:26 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 22:46:40 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int Client::command_NICK(t_command &cmd)
 			+ " :Nickname is erroneous");
 		return (0);
 	}
-	if (is_already_in_use(cmd.parameters[0]) || cmd.parameters[0] == "bot") {
+	if ((_nick != cmd.parameters[0] && is_already_in_use(cmd.parameters[0])) || cmd.parameters[0] == "bot") {
 		send_message(":" + get_server_addr() + " 433 * " + cmd.parameters[0]
 	+ " :Nickname is already in use");
 		return (0);

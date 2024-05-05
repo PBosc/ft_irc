@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:46 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 16:07:35 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 23:22:06 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,26 +43,14 @@ int Client::command_PRIVMSG(t_command &command)
 			send_message(":" + get_server_addr() + " 442 * " + command.parameters[0] + " :You're not on that channel");
 			return (0);
 		}
-		for (std::vector<std::string>::iterator it = g_server.get_ban_words().begin(); it != g_server.get_ban_words().end(); it++)
+		std::string msg("");
+		for (std::vector<std::string>::iterator it = command.parameters.begin() + 1; it != command.parameters.end(); it++)
 		{
-			if (command.suffix.find(*it) != std::string::npos)
-			{
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " : You are not allowed to say that word");
-				return (0);
-			}
+			if (it != command.parameters.begin() + 1)
+				msg += " ";
+			msg += *it;
 		}
-		for (std::map<std::string, std::string>::iterator it = g_server.get_bot_responses().begin(); it != g_server.get_bot_responses().end(); it++)
-		{
-			if (command.suffix.find((*it).first, 0) == 0)
-			{
-				std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " PRIVMSG " + command.parameters[0] + " :" + command.suffix);
-				channel->broadcast(message, _fd);
-				message = ":bot!bot@" + get_server_addr() + " PRIVMSG " + command.parameters[0] + " :" + (*it).second;
-				channel->broadcast(message, -42);
-				return (0);
-			}
-		}
-		std::string message = ":" + _nick + "!" + _user + "@" + get_addr() + " PRIVMSG " + command.parameters[0] + " :" + command.suffix;
+		std::string message = ":" + _nick + "!" + _user + "@" + get_addr() + " PRIVMSG " + command.parameters[0] + " :" + msg + (msg.size() && command.suffix.size() ? " " : "") + command.suffix;
 		channel->broadcast(message, _fd);
 		return (0);
 	}
@@ -79,9 +67,18 @@ int Client::command_PRIVMSG(t_command &command)
 			std::stringstream ss(command.suffix);
 			std::string first_word;
 			ss >> first_word;
+			std::string msg("");
+			for (std::vector<std::string>::iterator it = command.parameters.begin() + 1; it != command.parameters.end(); it++)
+			{
+				if (it != command.parameters.begin() + 1)
+					msg += " ";
+				msg += *it;
+			}
+			std::string message = ":" + _nick + "!" + _user + "@" + get_addr() + " PRIVMSG " + command.parameters[0] + " :" + msg + (msg.size() && command.suffix.size() ? " " : "") + command.suffix;
 			(*it).second->send_message(":" + _nick + "!" + _user + "@" + get_addr() + " PRIVMSG " + command.parameters[0] + " :" + command.suffix + "\r\n");
 			return (0);
 		}
 	}
+	send_message(":" + get_server_addr() + " 401 * " + command.parameters[0] + " :No such nick/channel");
 	return (0);
 }

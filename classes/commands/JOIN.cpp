@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:17 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 21:01:27 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/06 00:03:13 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ int Client::command_JOIN(t_command &command)
 {
 	Channel	*channel;
 
-	if (!this->can_execute())
+	if (!can_execute())
 	{
-		send_message(":" + get_server_addr() + " 462 * JOIN :You are already in a channel");
+		send_message(":" + get_server_addr() + " 451 * JOIN :You have not registered");
 		return (0);
 	}
 	if (command.parameters.size() < 1)
@@ -30,7 +30,10 @@ int Client::command_JOIN(t_command &command)
 	}
 	if (g_server.get_channels().find(command.parameters[0]) == g_server.get_channels().end())
 	{
-		channel = new Channel(command.parameters[0]);
+		std::string pass("");
+		if (command.parameters.size() > 1)
+			pass = command.parameters[1];
+		channel = new Channel(command.parameters[0], pass);
 		g_server.set_channel(command.parameters[0], channel);
 		channel->add_user(_fd);
 		channel->set_oper(_fd, true);
@@ -53,7 +56,7 @@ int Client::command_JOIN(t_command &command)
 		send_message(":" + get_server_addr() + " 475 * " + command.parameters[0] + " :Cannot join channel (+k)");
 		return (0);
 	}
-	if (channel->get_key() != "" && command.parameters[1] != channel->get_key())
+	if (command.parameters.size() >= 2 && command.parameters[1] != channel->get_key())
 	{
 		send_message(":" + get_server_addr() + " 475 * " + command.parameters[0] + " :Cannot join channel (+k)");
 		return (0);
@@ -63,7 +66,7 @@ int Client::command_JOIN(t_command &command)
 		send_message(":" + get_server_addr() + " 462 * JOIN :You are already in that channel");
 		return (0);
 	}
-	if (channel->get_user_limit() != 0
+	if (channel->get_limit_set()
 		&& channel->get_users().size() >= channel->get_user_limit())
 	{
 		send_message(":" + get_server_addr() + " 471 * " + command.parameters[0] + " :Channel full");
@@ -88,5 +91,7 @@ int Client::command_JOIN(t_command &command)
 	}
 	send_message(":" + get_server_addr() + " 353 " + _nick + " = " + command.parameters[0] + " :" + names);
 	send_message(":" + get_server_addr() + " 366 " + _nick + " " + command.parameters[0] + " :End of NAMES list.");
+	send_message(":" + get_server_addr() + " 324 " + _nick + " +" + (channel->get_invite_only() ? "i" : "") + (channel->get_topic_op_only() ? "t" : "") + (channel->get_key().length() ? "k" : "") + (channel->get_limit_set() ? "l" : ""));
+	send_message(":" + get_server_addr() + " TOPIC " + command.parameters[0] + " :" + channel->get_topic());
 	return (0);
 }

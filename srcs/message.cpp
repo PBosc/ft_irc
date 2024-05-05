@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/05 20:40:20 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 23:19:35 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,39 +33,46 @@ std::ostream& operator<<(std::ostream &out, t_command &cmd)
     return (out);
 }
 
-t_command parse_command(std::string line)
+t_command	parse_command(std::string &line)
 {
-	t_command cmd;
-	
-	std::stringstream ss(line);
-	std::string word;
+	std::stringstream	ss(line);
+	t_command			cmd;
+	std::string			word;
 
 	cmd.has_suffix = false;
-	ss >> word;
-	unsigned long pos = word.find(":");
-	while (pos == word.size() - 1)
+	bool first = true;
+	while (ss >> word)
 	{
-		cmd.prefix.append(word);
-		ss >> word;
-		pos = word.find(":");
-	}
-	std::transform(word.begin(), word.end(), word.begin(), ::toupper);
-	cmd.command = word;
-	while (ss >> word && word[0] != ':')
-	{
+		if (first && word[0] == ':')
+		{
+			word.erase(0, 1);
+			cmd.prefix = word;
+			first = false;
+			continue ;
+		}
+		if (first)
+		{
+			cmd.command = word;
+			first = false;
+			continue ;
+		}
+		if (word[0] == ':' || cmd.has_suffix)
+		{
+			cmd.has_suffix = true;
+			if (word[0] == ':')
+				word.erase(0, 1);
+			if (cmd.suffix.size())
+				cmd.suffix.append(" ");
+			cmd.suffix.append(word);
+			continue ;
+		}
 		cmd.parameters.push_back(word);
 	}
-	bool first = true;
-	while (ss)
+	if (cmd.parameters.size())
 	{
-		cmd.has_suffix = true;
-		if (!first)
-			cmd.suffix.append(" ");
-		if (first && word[0] == ':')
-			word.erase(0, 1);
-		first = false;
-		cmd.suffix.append(word);
-		ss >> word;
+		std::stringstream s(cmd.parameters.at(0));
+		while (getline(s, word, ','))
+			cmd.cmds.push_back(word);
 	}
 	return (cmd);
 }
@@ -100,7 +107,17 @@ void	handle_message(int fd)
 				// std::cout << cmd << std::endl;
 				if (g_server.get_commands().find(cmd.command) != g_server.get_commands().end())
 				{
-					if ((g_server.get_clients()[fd]->*g_server.get_commands()[cmd.command])(cmd))
+					if (cmd.cmds.size())
+					{
+						for (std::vector<std::string>::iterator it = cmd.cmds.begin(); it != cmd.cmds.end(); it++)
+						{
+							cmd.parameters.at(0) = *it;
+							(g_server.get_clients()[fd]->*g_server.get_commands()[cmd.command])(cmd);
+							if (!g_server.get_clients()[fd])
+								return ;
+						}
+					}
+					else if ((g_server.get_clients()[fd]->*g_server.get_commands()[cmd.command])(cmd))
 						return ;
 				}
 				else

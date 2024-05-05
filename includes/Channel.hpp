@@ -13,7 +13,7 @@ class Channel
 	std::string _topic;
 	bool _is_topic_set;
 	std::string _key;
-	bool _is_key_set;
+	// bool _is_key_set;
 	unsigned int _max_users;
 	bool _is_invite_only;
 	bool _is_limit_set;
@@ -21,14 +21,13 @@ class Channel
 	bool _is_topic_op_only;
 
   public:
-	Channel();
-	Channel(std::string name);
+	Channel(std::string &name, std::string &pass);
 	~Channel();
 
 	bool is_user(int fd_user);
 
 	void add_user(int fd_user);
-	void kick_user(int fd_to_kick);
+	void kick_user(int fd_to_kick, const std::string &reason, bool iterator, Client *client);
 	void disconnect_user(int fd_to_disconnect);
 	void part_user(int fd_user, const std::string &reason, bool iterator);
 	void invite(int fd_invited, Client *client);
@@ -53,7 +52,7 @@ class Channel
 	std::string get_key(void) const;
 	unsigned int get_user_limit(void) const;
 	bool get_invite_only(void) const;
-	bool get_key_set(void) const;
+	// bool get_key_set(void) const;
 	bool get_limit_set(void) const;
 	bool get_topic_op_only(void) const;
 	std::map<int, Client *> &get_invited();
