@@ -164,6 +164,8 @@ void Channel::set_max_users(int max_users) {
 }
 
 void Channel::set_invite_only(bool is_invite_only) {
+    if (!is_invite_only)
+        _invited_users.clear();
     _is_invite_only = is_invite_only;
 }
 

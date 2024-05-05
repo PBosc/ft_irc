@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/05 19:24:20 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 20:39:40 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,7 +241,6 @@ void Server::kick_user(int fd)
 	delete _clients[fd];
 	_clients[fd] = NULL;
 	close(fd);
-	std::cout << "User with fd " << fd << " disconnected." << std::endl;
 }
 
 Client *Server::find_client_by_nick(std::string &nick) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MODE.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:25 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 18:08:14 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/05 20:35:37 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,14 @@ void Client::handle_i_mode(t_command &command, bool sign, Channel *channel)
 		send_message(":" + get_server_addr() + " 482 * " + command.parameters[0] + " :You're not operator");
 		return ;
 	}
+	if (channel->get_invite_only() && sign)
+	{
+		send_message(":" + get_server_addr() + " 324 " + _nick + " " + command.parameters[0] + " +Cint");
+		send_message(":" + get_server_addr() + " 324 " + _nick + " " + command.parameters[0] + " 0");
+		return ;
+	}
 	channel->set_invite_only(sign);
-	std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + " +i" + " :is " + (channel->get_invite_only() ? "now" : "not anymore") + " invite only");
+	std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + (sign ? " +i" : " -i"));
 	channel->broadcast(message, -42);
 }
 
@@ -45,7 +51,7 @@ void Client::handle_t_mode(t_command &command, bool sign, Channel *channel)
 		return ;
 	}
 	channel->set_topic_op_only(sign);
-	std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + " " + command.parameters[0] + " :is " + (channel->get_topic_op_only() ? "now" : "not anymore") + " topic op only");
+	std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + (sign ? " +" : " -") + "t");
 	channel->broadcast(message, -42);
 }
 
@@ -67,7 +73,7 @@ void Client::handle_k_mode(t_command &command, bool sign, size_t &params, Channe
 		return ;
 	}
 	channel->set_key(command.parameters.at(params));
-	std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + (sign ? " +" : " -") + "k" + " :" + (sign ? command.parameters.at(params) : "key removed"));
+	std::string message(":" + _nick + "!" + _user + "@" + get_addr() + " MODE " + channel->get_name() + (sign ? " +k :" : " -k :") + (sign ? command.parameters.at(params) : "key removed"));
 	channel->broadcast(message, -42);
 }
 
@@ -177,14 +183,14 @@ int Client::command_MODE(t_command &command)
 			if (command.parameters.at(1) == "+i")
 			{
 				_is_invisible = true;
-				send_message(":" + get_server_addr() + " 381 * :You're now invisible");
+				send_message(":" + get_server_addr() + " 221 " + _nick + " +i");
 				return (0);
 			}
-			else if (command.parameters.at(1) == "-i")
+			else
 			{
 				_is_invisible = false;
-				send_message(":" + get_server_addr() + " 381 * :You're now visible");
-				return (0);
+				std::string msg(":" + _nick + "!" + _user + "@3" + get_server_addr() + " MODE " + _nick + " -i");
+				g_server.broadcast(msg, -42);
 			}
 			send_message(":" + get_server_addr() + " 461 * MODE :Invalid mode");
 			return (0);

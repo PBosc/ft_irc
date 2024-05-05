@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   KICK.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:19 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 04:11:48 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/05 19:42:28 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ int Client::command_KICK(t_command &command)
 		send_message(":" + get_server_addr() + " 501 * :The user you want to kick is not in channel " + command.parameters[0]);
 		return (0);
 	}
-	target->send_message(":" + target->get_server_addr() + " 381 " + command.parameters[1] + " :You have been kicked from channel " + command.parameters[0] + " : " + command.suffix);
-	channel->kick_user(target->get_fd());
+	channel->part_user(target->get_fd(), "Kicked by " + _nick, false);
 	return (0);
 }

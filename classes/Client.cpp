@@ -27,6 +27,8 @@ bool Client::can_execute(void) const
 
 bool Client::send_message(const std::string &message)
 {
+	if (message.length() >= 510)
+		return (send(_fd, (message.substr(0, 510) + "\r\n").c_str(), 512, MSG_NOSIGNAL));
 	return (send(_fd, (message + "\r\n").c_str(), message.length() + 2, MSG_NOSIGNAL) >= 0);
 }
 

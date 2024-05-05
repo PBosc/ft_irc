@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:17 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 19:29:18 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 20:23:39 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int Client::command_JOIN(t_command &command)
 	channel->get_invited().erase(_fd);
 	std::string message = ":" + _nick + "!" + _user + "@" + get_addr() + " JOIN " + command.parameters[0];
 	channel->broadcast(message, -42);
-	std::string names = "";
+	std::string names;
 	bool first = true;
 	for (std::size_t i = 0; i < channel->get_users().size(); ++i)
 	{
@@ -86,7 +86,7 @@ int Client::command_JOIN(t_command &command)
 		names.append((channel->get_oper(client_fd) ? "@" : "") + client->get_nick());
 		first = false;
 	}
-	send_message(":" + get_server_addr() + " 353 " + _nick + " = " + command.parameters[0] + " :" + names);
+	send_message(":" + get_server_addr() + " 353 " + _nick + " = #test :" + names);
 	send_message(":" + get_server_addr() + " 366 " + _nick + " " + command.parameters[0] + " :End of NAMES list.");
 	return (0);
 }
