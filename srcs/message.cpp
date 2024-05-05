@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 21:34:58 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 01:49:50 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,19 @@
 
 std::ostream& operator<<(std::ostream &out, t_command &cmd)
 {
-    out << "####  NEW COMMAND  ####" << std::endl;
-    out << "    PREFIX = " << cmd.prefix << std::endl; 
-    out    << "    COMMAND = " << cmd.command << std::endl;
-    out    << " PARAMETERS :" << std::endl;
+    if (cmd.prefix != "")
+		out << MAGENTA << "PREFIX = " << RESET << YELLOW << cmd.prefix << RESET << std::endl << std::endl << std::endl;
+	else
+		out << RED << "NO PREFIX" << RESET << std::endl;
+    out    << MAGENTA << "COMMAND = " << RESET << GREEN << cmd.command << RESET << std::endl;
+    out    << MAGENTA << "PARAMETERS :" << RESET << std::endl;
     for (std::vector<std::string>::iterator it = cmd.parameters.begin(); it != cmd.parameters.end(); it++) {
-        out << "        - " << *it << std::endl;
+        out << "        - " << BLUE << *it << RESET << std::endl;
     }
-    out << "    SUFFIX = " << cmd.suffix << std::endl << std::endl << std::endl;
+	if (cmd.suffix != "")
+		out << MAGENTA << "SUFFIX = " << RESET << YELLOW << cmd.suffix << RESET << std::endl << std::endl << std::endl;
+	else
+		out << RED << "NO SUFFIX" << RESET << std::endl;
     return (out);
 }
 
@@ -86,6 +91,7 @@ void	handle_message(int fd)
 			std::stringstream ss(g_server.get_clients()[fd]->get_message());
 			while (std::getline(ss, line))
 			{
+				std::cout << "####  NEW COMMAND  ####" << std::endl;
 				std::cout << line << std::endl;
 				t_command cmd;
 				if (line.size() == g_server.get_clients()[fd]->get_message().size())

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   JOIN.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:17 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 22:46:02 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 02:35:34 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ int Client::command_JOIN(t_command &command)
 		return (0);
 	}
 	channel = g_server.get_channels()[command.parameters[0]];
-	if (channel->get_invite_only())
+	std::map<int, Client *> invited = channel->get_invited();
+	if (channel->get_invite_only() && (!invited.size() || invited.find(_fd) == invited.end()))
 	{
 		send_message(":" + get_server_addr() + " 473 * " + command.parameters[0] + " :Cannot join channel (+i)");
 		return (0);

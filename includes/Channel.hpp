@@ -9,6 +9,7 @@ class Channel
 	std::string _name;
 	std::vector<int> _fds_users;
 	std::map<int, bool> _fds_operators;
+	std::map<int, Client *> _invited_users;
 	std::string _topic;
 	bool _is_topic_set;
 	std::string _key;
@@ -30,6 +31,7 @@ class Channel
 	void kick_user(int fd_to_kick);
 	void disconnect_user(int fd_to_disconnect);
 	void part_user(int fd_user, const std::string &reason);
+	void invite(int fd_invited, Client *client);
 
 	void set_topic(std::string topic);
 	void unset_topic();
@@ -53,6 +55,8 @@ class Channel
 	bool get_key_set(void) const;
 	bool get_limit_set(void) const;
 	bool get_topic_op_only(void) const;
+	std::map<int, Client *> get_invited() const;
+
 	void broadcast(std::string &message, int emitter);
 };
 

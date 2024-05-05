@@ -103,6 +103,12 @@ void Channel::kick_user(int fd_to_kick) {
     std::cerr << "Error while kicking user from channel" << std::endl;
 }
 
+void Channel::invite(int fd_invited, Client *client)
+{
+	_invited_users[fd_invited] = client;
+}
+
+
 void Channel::set_topic(std::string topic) {
     _topic = topic;
     _is_topic_set = true;
@@ -194,6 +200,12 @@ bool Channel::get_oper(int fd)
 {
 	return (_fds_operators[fd]);
 }
+
+std::map<int, Client *> Channel::get_invited() const {
+	return _invited_users;
+}
+
+
 
 void Channel::broadcast(std::string &message, int emitter) {
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
