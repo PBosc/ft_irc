@@ -4,3 +4,6 @@ ft_irc
 ircserv
 .vscode
 test*
+*.out
+.vscode/
+bot

@@ -32,6 +32,7 @@ class Channel
 	void disconnect_user(int fd_to_disconnect);
 	void part_user(int fd_user, const std::string &reason);
 	void invite(int fd_invited, Client *client);
+	int op_count(void);
 
 	void set_topic(std::string topic);
 	void unset_topic();

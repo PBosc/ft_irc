@@ -6,7 +6,7 @@
 /*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:35 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 20:15:16 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/05 06:53:17 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ bool is_operator_valid(std::string nick) {
 	return false;
 }
 
-// TODO irsii renvoie la commande une 2eme fois apres que le client soit devenu operator pk???
 
 
 int Client::command_OPER(t_command &cmd)

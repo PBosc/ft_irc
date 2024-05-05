@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+         #
+#    By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/13 22:58:31 by wouhliss          #+#    #+#              #
-#    Updated: 2024/05/04 19:07:25 by wouhliss         ###   ########.fr        #
+#    Updated: 2024/05/05 07:16:38 by ybelatar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,21 +45,32 @@ CLASS = $(CLASS_PATH)Channel.cpp \
 		$(COMMAND_PATH)USER.cpp \
 		$(COMMAND_PATH)UNKNOWN.cpp
 
+BOT_SRCS = srcs/bot/main.cpp
+
 OBJS = 	${SRCS:.cpp=.o} \
 		${CLASS:.cpp=.o}
+
+BOT_OBJS = ${BOT_SRCS:.cpp=.o}
+
+BOT_DEPS =	${BOT_SRCS:.cpp=.d}
 
 OBJSDIR = objs/
 
 OBJS := $(addprefix $(OBJSDIR), $(OBJS))
+
+BOT_OBJS := $(addprefix $(OBJSDIR), $(BOT_OBJS))
 
 DEPS = 	${SRCS:.cpp=.d} \
 		${CLASS:.cpp=.d}
 	
 DEPS := $(addprefix $(OBJSDIR), $(DEPS))
 
-NAME = ircserv
+BOT_DEPS := $(addprefix $(OBJSDIR), $(BOT_DEPS))
 
-all: ${NAME}
+NAME = ircserv
+BOT_NAME = bot
+
+all: ${NAME} ${BOT_NAME}
 
 # .cpp.o:
 # 	${CPP} ${CPP_FLAGS} -c $< -o ${<:.cpp=.o}
@@ -71,6 +82,9 @@ $(OBJSDIR)%.o: %.cpp
 ${NAME}: ${OBJS}
 	${CPP} ${CPP_FLAGS} ${OBJS} -o ${NAME}
 
+${BOT_NAME} : ${BOT_OBJS} 
+	${CPP} ${CPP_FLAGS} ${BOT_OBJS} -o ${BOT_NAME}
+
 clean:
 	${RM} ${RM_FLAGS} ${OBJSDIR}
 
@@ -80,6 +94,6 @@ fclean: clean
 re: fclean
 	make all
 
--include ${DEPS}
+-include ${DEPS} ${BOT_DEPS}
 
 .PHONY: all clean fclean re

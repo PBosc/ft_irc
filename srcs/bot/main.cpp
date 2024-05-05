@@ -63,15 +63,14 @@ int main(int ac, char **av)
 {
     char    buf[4096 + 1];
     int ret;
-    if (ac != 5)
+    if (ac != 4)
     {
-        std::cerr << "Usage: ./bot <nick> <host> <port> <pass>" << std::endl;
+        std::cerr << "Usage: ./bot <host> <port> <pass>" << std::endl;
         return (84);
     }
-    std::string nick(av[1]);
-    std::string host(av[2]);
-    std::string port(av[3]);
-    std::string pass(av[4]);
+    std::string host(av[1]);
+    std::string port(av[2]);
+    std::string pass(av[3]);
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
@@ -98,6 +97,12 @@ int main(int ac, char **av)
         std::cerr << "Error: connect() failed" << std::endl;
         return (84);
     }
+	std::string msg("PASS " + pass + "\n");
+	if (send(g_fd, msg.c_str(), msg.size(), 0) < 0)
+    {
+        std::cerr << "Error: send() failed" << std::endl;
+        return (84);
+    }
     if (send(g_fd, "CAP BOT\n", 8, 0) < 0)
     {
         std::cerr << "Error: send() failed" << std::endl;
@@ -121,13 +126,19 @@ int main(int ac, char **av)
         std::cout << "Prefix: " << cmd.prefix << std::endl;
         if (cmd.command == "PRIVMSG")
         {
+				std::string	msg("PRIVMSG " + cmd.prefix + " :Invalid command\n");
             if (cmd.suffix.find("!add_ban_word") == 0)
             {
                 std::cout << "Adding ban word" << std::endl;
+				if (cmd.command.size() == 13)
+				{
+					send(g_fd, msg.c_str(), msg.size(), 0);
+                    continue;
+				}
                 std::string word = cmd.suffix.substr(14);
                 if (word.empty())
                 {
-                    send(g_fd, ("PRIVMSG " + cmd.prefix + " :Invalid command\n").c_str(), 50, 0);
+                    send(g_fd, msg.c_str(), msg.size(), 0);
                     continue;
                 }
                 std::cout << "Adding ban word: " << word << std::endl;
@@ -142,7 +153,8 @@ int main(int ac, char **av)
                     {
                         std::cout << "Swearing detected" << std::endl;
                         std::string to_ban = cmd.prefix.substr(1, cmd.prefix.find("!") - 1);
-                        send(g_fd, ("KILL " + to_ban + " :Swearing detected\n").c_str(), 50, 0);
+						msg = ("KILL " + to_ban + " :Swearing detected\n");
+                        send(g_fd, msg.c_str(), msg.size(), 0);
                         break;
                     }
                 }

@@ -71,7 +71,19 @@ void Channel::part_user(int fd_user, const std::string &reason) {
 	broadcast(message, -42);
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
         if (*it == fd_user) {
+
             _fds_users.erase(it);
+			if (_fds_users.size() == 0) {
+				delete g_server.get_channels()[_name];
+				g_server.get_channels().erase(_name);
+				return ;
+			}
+			if (_fds_operators[fd_user] && op_count() == 1) {
+				_fds_operators[_fds_users.at(0)] = true;
+				Client	*client = g_server.get_clients()[_fds_users.at(0)];
+				client->send_message(":" + client->get_server_addr() + " MODE " + _name + " +o :" + client->get_nick() + " is now an operator");
+				_fds_operators.erase(fd_user);
+			}
             return;
         }
     }
@@ -101,6 +113,15 @@ void Channel::kick_user(int fd_to_kick) {
         }
     }
     std::cerr << "Error while kicking user from channel" << std::endl;
+}
+
+int Channel::op_count() {
+	int c = 0;
+	for (std::map<int, bool>::iterator it = _fds_operators.begin(); it != _fds_operators.end(); ++it) {
+		if (it->second)
+			++c;
+	}
+	return c;
 }
 
 void Channel::invite(int fd_invited, Client *client)

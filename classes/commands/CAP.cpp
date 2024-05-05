@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CAP.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:28:59 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 02:48:50 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/05 07:20:35 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@ int Client::command_CAP(t_command &command)
 	}
 	if (command.parameters[0] == "BOT")
 	{
+		if (!_has_password)
+		{
+			send_message("You have not registered correctly. (password missing)");
+			g_server.kick_user(_fd);
+			return (0);
+		}
 		send_message("Registering as bot");
 		std::cout << "Registering as bot" << std::endl;
 		_is_operator = true;
