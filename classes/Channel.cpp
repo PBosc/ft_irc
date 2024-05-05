@@ -13,6 +13,7 @@ Channel::Channel() {
     _is_key_set = false;
     _is_topic_op_only = false;
     _is_limit_set = false;
+    _limit = 0;
 }
 
 Channel::Channel(std::string name) {
@@ -26,6 +27,7 @@ Channel::Channel(std::string name) {
     _is_key_set = false;
     _is_topic_op_only = false;
     _is_limit_set = false;
+    _limit = 0;
 }
 
 Channel::~Channel() { }
