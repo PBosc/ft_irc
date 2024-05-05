@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 23:41:16 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 02:48:43 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,6 +193,18 @@ void Server::set_client(int &fd, Client *client)
 int &Server::get_clients_id(void)
 {
 	return (_clients_id);
+}
+
+void Server::set_bot_fd(int fd)
+{
+	if (_bot_fd != -1)
+		kick_user(_bot_fd);
+	_bot_fd = fd;
+}
+
+int Server::get_bot_fd(void)
+{
+	return (_bot_fd);
 }
 
 void Server::set_clients_id(int &clients_id)

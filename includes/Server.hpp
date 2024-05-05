@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:40:32 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 23:37:49 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 02:48:20 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ class Server
 	std::map<std::string, std::string> &get_bot_responses(void);
 	void add_bot_response(std::string &trigger, std::string &response);
 	size_t remove_bot_response(std::string &trigger);
+	void set_bot_fd(int fd);
+	int get_bot_fd(void);
 
   private:
 	t_epoll _epoll;
@@ -61,6 +63,7 @@ class Server
 	int _clients_id;
 	std::map <std::string, std::string> _bot_responses;
 	std::vector<std::string> _ban_words;
+	int	_bot_fd;
 };
 std::ostream &operator<<(std::ostream &os, Server &server);
 extern Server	g_server;
