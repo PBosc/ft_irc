@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PRIVMSG.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:46 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 23:44:48 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 02:49:29 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,107 +70,6 @@ int Client::command_PRIVMSG(t_command &command)
 	{
 		send_message(":" + get_server_addr() + " 412 * PRIVMSG :Cannot send to self");
 		return (0);
-	}
-	if (command.parameters[0] == "bot")
-	{
-		if (command.suffix.rfind("!help", 0) == 0)
-		{
-			send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :Available commands: !online, !help, !add_response, !remove_response, !add_ban_word, !remove_ban_word");
-			return (0);
-		}
-		if (command.suffix.rfind("!online", 0) == 0)
-		{
-			std::string	online;
-			for (std::map<int, Client *>::iterator it = g_server.get_clients().begin(); it != g_server.get_clients().end(); it++)
-			{
-				if ((*it).second)
-					online += (*it).second->get_nick() + " ";
-			}
-			send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :" + online);
-			return (0);
-		}
-		if (command.suffix.rfind("!add_response", 0) == 0)
-		{
-			if (!_is_operator)
-			{
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :You're not an operator");
-				return (0);
-			}
-			std::string response;
-			std::string key;
-			std::stringstream ss(command.suffix.substr(13));
-			ss >> key;
-			ss >> response;
-			if (key.empty() || response.empty())
-			{
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :Invalid command");
-				return (0);
-			}
-			g_server.add_bot_response(key, response);
-			send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :Response added");
-			return (0);
-		}
-		if (command.suffix.rfind("!remove_response", 0) == 0)
-		{
-			if (!_is_operator)
-			{
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :You're not an operator");
-				return (0);
-			}
-			std::string key;
-			std::stringstream ss(command.suffix.substr(16));
-			ss >> key;
-			if (!_is_operator || key.empty())
-			{
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :Invalid command");
-				return (0);
-			}
-			if (g_server.remove_bot_response(key) == 0)
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :Response removed");
-			else
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :No such response");
-			return (0);
-		}
-		if (command.suffix.rfind("!add_ban_word", 0) == 0)
-		{
-			if (!_is_operator)
-			{
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :You're not an operator");
-				return (0);
-			}
-			std::string word;
-			std::stringstream ss(command.suffix.substr(13));
-			ss >> word;
-			if (word.empty())
-			{
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :Invalid command");
-				return (0);
-			}
-			g_server.add_ban_word(word);
-			send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :Word added");
-			return (0);
-		}
-		if (command.suffix.rfind("!remove_ban_word", 0) == 0)
-		{
-			if (!_is_operator)
-			{
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :You're not an operator");
-				return (0);
-			}
-			std::string word;
-			std::stringstream ss(command.suffix.substr(16));
-			ss >> word;
-			if (word.empty())
-			{
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :Invalid command");
-				return (0);
-			}
-			if (g_server.remove_ban_word(word))
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :Word removed");
-			else
-				send_message(":bot!bot@" + get_server_addr() + " PRIVMSG " + _nick + " :No such word");
-			return (0);
-		}
 	}
 	for (std::map<int, Client *>::iterator it = g_server.get_clients().begin(); it != g_server.get_clients().end(); it++)
 	{
