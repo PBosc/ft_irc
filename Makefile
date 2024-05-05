@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+         #
+#    By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/13 22:58:31 by wouhliss          #+#    #+#              #
-#    Updated: 2024/05/05 18:05:27 by ybelatar         ###   ########.fr        #
+#    Updated: 2024/05/05 20:42:59 by wouhliss         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CPP = c++
 INCLUDE_PATH = includes
-CPP_FLAGS = -Wall -Wextra -Werror -MMD -MP -std=c++98 -g3 -I $(INCLUDE_PATH)
+CPP_FLAGS = -Wall -Wextra -Werror -MMD -MP -std=c++98 -Ofast -I $(INCLUDE_PATH)
 RM = rm
 RM_FLAGS = -rf
 

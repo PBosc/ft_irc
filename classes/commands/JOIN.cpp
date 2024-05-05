@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:17 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 20:23:39 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 21:01:27 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int Client::command_JOIN(t_command &command)
 		std::string message = ":" + _nick + "!" + _user + "@" + get_addr() + " JOIN " + command.parameters[0];
 		send_message(message);
 		std::string names = "@" + _nick;
-		send_message(":" + get_server_addr() + " 353 " + _nick + " = " + command.parameters[0] + " : " + names);
+		send_message(":" + get_server_addr() + " 353 " + _nick + " = " + command.parameters[0] + " :" + names);
 		send_message(":" + get_server_addr() + " 366 " + _nick + " " + command.parameters[0] + " :End of NAMES list.");
 		return (0);
 	}
@@ -86,7 +86,7 @@ int Client::command_JOIN(t_command &command)
 		names.append((channel->get_oper(client_fd) ? "@" : "") + client->get_nick());
 		first = false;
 	}
-	send_message(":" + get_server_addr() + " 353 " + _nick + " = #test :" + names);
+	send_message(":" + get_server_addr() + " 353 " + _nick + " = " + command.parameters[0] + " :" + names);
 	send_message(":" + get_server_addr() + " 366 " + _nick + " " + command.parameters[0] + " :End of NAMES list.");
 	return (0);
 }

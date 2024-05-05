@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   NICK.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:30 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 04:30:13 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/05 20:57:26 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ bool	erroneous_nick(std::string nick)
 {
 	std::string specials = "[]|^_-{}";
 
-	if (nick.length() > 9)
+	if (nick.length() > 16)
 		return true;
 	for (std::string::iterator it = nick.begin(); it != nick.end(); it++)
 	{
