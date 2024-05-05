@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   KILL.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:22 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 17:48:39 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 02:53:07 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,10 @@ int Client::command_KILL(t_command &cmd)
 	
 	if (!_has_password || !_has_Client || !_has_nick) {
 		send_message(":" + get_server_addr() + " 451 * KILL :You have not registered");
+		return 1;
+	}
+	if (cmd.parameters.size() != 1) {
+		send_message(":" + get_server_addr() + " 501 * :Not enough parameters");
 		return 1;
 	}
 	if (!_is_operator) {

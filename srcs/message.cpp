@@ -6,7 +6,7 @@
 /*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/05 01:49:50 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/05 03:06:02 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,13 +91,13 @@ void	handle_message(int fd)
 			std::stringstream ss(g_server.get_clients()[fd]->get_message());
 			while (std::getline(ss, line))
 			{
-				std::cout << "####  NEW COMMAND  ####" << std::endl;
-				std::cout << line << std::endl;
+				// std::cout << "####  NEW COMMAND  ####" << std::endl;
+				// std::cout << line << std::endl;
 				t_command cmd;
 				if (line.size() == g_server.get_clients()[fd]->get_message().size())
 					break ;
 				cmd = parse_command(line);
-				std::cout << cmd << std::endl;
+				// std::cout << cmd << std::endl;
 				if (g_server.get_commands().find(cmd.command) != g_server.get_commands().end())
 				{
 					if ((g_server.get_clients()[fd]->*g_server.get_commands()[cmd.command])(cmd))
