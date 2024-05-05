@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/05 16:52:33 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 18:04:26 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ bool Server::init(int port, std::string password)
 	_commands["TOPIC"] = &Client::command_TOPIC;
 	_commands["NOTICE"] = &Client::command_NOTICE;
 	_commands["INVITE"] = &Client::command_INVITE;
+	_commands["WHO"] = &Client::command_WHO;
 	_commands["UNKNOWN"] = &Client::command_unknown;
 	_socket.fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socket.fd < 0)

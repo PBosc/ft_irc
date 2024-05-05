@@ -6,7 +6,7 @@
 #    By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/13 22:58:31 by wouhliss          #+#    #+#              #
-#    Updated: 2024/05/05 07:16:38 by ybelatar         ###   ########.fr        #
+#    Updated: 2024/05/05 18:05:27 by ybelatar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,6 +43,7 @@ CLASS = $(CLASS_PATH)Channel.cpp \
 		$(COMMAND_PATH)QUIT.cpp \
 		$(COMMAND_PATH)TOPIC.cpp \
 		$(COMMAND_PATH)USER.cpp \
+		$(COMMAND_PATH)WHO.cpp \
 		$(COMMAND_PATH)UNKNOWN.cpp
 
 BOT_SRCS = srcs/bot/main.cpp

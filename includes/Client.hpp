@@ -8,15 +8,13 @@ class Client
 {
   private:
 	int _id, _fd;
-	std::string _nick, _user, _name;
+	std::string _nick, _user, _name, _real_name;
 	struct sockaddr_in	_socket;
 	bool _has_password, _has_nick, _has_Client, _is_identified, _is_operator, _is_invisible;
 	std::string _message;
 
   public:
 	Client(int fd, int id, struct sockaddr_in socket);
-	Client(const Client &obj);
-	Client &operator=(const Client &rhs);
 	bool send_message(const std::string &message);
 	int command_CAP(t_command &command);
 	int command_PASS(t_command &command);
@@ -35,6 +33,7 @@ class Client
 	int command_TOPIC(t_command &command);
 	int command_NOTICE(t_command &command);
 	int command_INVITE(t_command &command);
+	int command_WHO(t_command &command);
 	int command_unknown(t_command &command);
 
 	void handle_i_mode(t_command &command, bool sign, Channel *channel);
@@ -49,6 +48,8 @@ class Client
 	int get_id(void) const;
 	int get_fd(void) const;
 	std::string get_nick(void) const;
+	std::string get_name(void) const;
+	std::string get_real_name(void) const;
 	std::string get_client(void) const;
 	std::string get_server_addr(void) const;
 	std::string get_addr(void) const;
@@ -56,6 +57,7 @@ class Client
 	bool is_operator(void);
 	std::string &get_message(void);
 	void set_operator(bool b);
+	void set_server_addr(std::string &rn);
 	void set_message(std::string &message);
 	bool is_invisible(void) const;
 	void set_invisible(bool b);

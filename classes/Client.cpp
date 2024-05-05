@@ -9,6 +9,7 @@ Client::Client(int fd, int id, struct sockaddr_in socket)
 	_nick = "";
 	_user = "";
 	_name = "";
+	_real_name = "";
 	_has_password = false;
 	_has_nick = false;
 	_has_Client = false;
@@ -17,41 +18,6 @@ Client::Client(int fd, int id, struct sockaddr_in socket)
 	_is_invisible = false;
 	_message = "";
 	_socket = socket;
-}
-
-Client::Client(const Client &obj)
-{
-	_id = obj._id;
-	_fd = obj._fd;
-	_nick = obj._nick;
-	_user = obj._user;
-	_name = obj._name;
-	_has_password = obj._has_password;
-	_has_nick = obj._has_nick;
-	_has_Client = obj._has_Client;
-	_is_identified = obj._is_identified;
-	_is_operator = obj._is_operator;
-	_message = obj._message;
-	_socket = obj._socket;
-	_is_invisible = obj._is_invisible;
-}
-
-Client &Client::operator=(const Client &rhs)
-{
-	_id = rhs._id;
-	_fd = rhs._fd;
-	_nick = rhs._nick;
-	_user = rhs._user;
-	_name = rhs._name;
-	_has_password = rhs._has_password;
-	_has_nick = rhs._has_nick;
-	_has_Client = rhs._has_Client;
-	_is_identified = rhs._is_identified;
-	_is_operator = rhs._is_operator;
-	_message = rhs._message;
-	_is_invisible = rhs._is_invisible;
-	_socket = rhs._socket;
-	return (*this);
 }
 
 bool Client::can_execute(void) const
@@ -98,6 +64,10 @@ std::string Client::get_client(void) const
 {
 	return (_user);
 }
+
+std::string Client::get_name(void) const {return _name;}
+
+std::string Client::get_real_name(void) const {return _real_name;}
 
 std::string Client::get_addr(void) const
 {
