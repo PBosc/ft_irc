@@ -6,7 +6,7 @@
 /*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/06 00:33:11 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/06 01:02:47 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ t_command	parse_command(std::string &line)
 		}
 		if (first)
 		{
+			std::transform(word.begin(), word.end(), word.begin(), ::toupper);
 			cmd.command = word;
 			first = false;
 			continue ;
