@@ -213,6 +213,9 @@ void Channel::broadcast(std::string &message, int emitter) {
             g_server.get_clients()[*it]->send_message(message);
         }
     }
+    if (g_server.get_bot_fd() != -1 && g_server.get_bot_fd() != emitter) {
+        g_server.get_clients()[g_server.get_bot_fd()]->send_message(message);
+    }
 }
 
 std::ostream& operator<< (std::ostream &out, const Channel &channel) {

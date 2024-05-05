@@ -6,7 +6,7 @@
 /*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/05 02:48:43 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/05 04:01:48 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ bool Server::init(int port, std::string password)
 	_port = port;
 	_password = password;
 	sock_opt_val = 1;
+	_socket.fd = -1;
+	_epoll.fd = -1;
 	_commands["CAP"] = &Client::command_CAP;
 	_commands["PASS"] = &Client::command_PASS;
 	_commands["NICK"] = &Client::command_NICK;

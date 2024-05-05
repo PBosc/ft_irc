@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   connection.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:01:15 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/04 17:10:46 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 04:05:58 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,6 @@ void	user_disconnection(int &i)
 	}
 	std::cout << "User with fd: " << g_server.get_epoll().events[i].data.fd << " disconnected" << std::endl;
 	g_server.kick_user(g_server.get_epoll().events[i].data.fd);
+	if (g_server.get_epoll().events[i].data.fd == g_server.get_bot_fd())
+		g_server.set_bot_fd(-1);
 }
