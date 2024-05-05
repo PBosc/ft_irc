@@ -149,7 +149,7 @@ int main(int ac, char **av)
                 std::cout << "Checking for ban words" << std::endl;
                 for (std::vector<std::string>::iterator it = g_ban_words.begin(); it != g_ban_words.end(); it++)
                 {
-                    if (message.find(*it) != std::string::npos)
+                    if (cmd.suffix.find(*it) != it->npos)
                     {
                         std::cout << "Swearing detected" << std::endl;
                         std::string to_ban = cmd.prefix.substr(1, cmd.prefix.find("!") - 1);
