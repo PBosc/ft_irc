@@ -109,7 +109,8 @@ int main(int ac, char **av)
         ret = read(g_fd, buf, 4096);
         if (ret <= 0)
         {
-            std::cerr << "Error: read() failed" << std::endl;
+            if (ret < 0)
+                std::cerr << "Error: read() failed" << std::endl;
             return (84);
         }
         buf[ret] = 0;

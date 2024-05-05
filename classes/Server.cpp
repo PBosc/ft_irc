@@ -6,7 +6,7 @@
 /*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/05 04:01:48 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/05 04:29:16 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ Server::Server(void)
 {
 	_socket.fd = -1;
 	_epoll.fd = -1;
+	_bot_fd = -1;
 }
 
 Server::~Server(void)
