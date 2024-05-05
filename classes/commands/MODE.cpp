@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   MODE.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:25 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 17:36:38 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 18:08:14 by pibosc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "Server.hpp"
+#include "IRC.hpp"
 
 void Client::handle_i_mode(t_command &command, bool sign, Channel *channel)
 {
@@ -156,6 +157,21 @@ int Client::command_MODE(t_command &command)
 	}
 	else
 	{
+		if (command.parameters.size() == 1)
+		{
+			if (command.parameters[0][0] == '#')
+			{
+				Channel *channel;
+				if (g_server.get_channels().find(command.parameters[0]) != g_server.get_channels().end())
+					channel = g_server.get_channels()[command.parameters[0]];
+				else
+				{
+					send_message(":" + get_server_addr() + " 403 * " + command.parameters[0] + " :No such channel");
+					return (0);
+				}
+				send_message(":" + get_server_addr() + " 324 * " + command.parameters[0] + " +" + (channel->get_invite_only() ? "i" : "") + (channel->get_topic_op_only() ? "t" : "") + (channel->get_key_set() ? "k": "") + (channel->get_limit_set() ? "l" : ""));
+			}
+		}
 		if (command.parameters.size() >= 2 && command.parameters.at(0) == _nick)
 		{
 			if (command.parameters.at(1) == "+i")
