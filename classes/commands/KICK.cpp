@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   KICK.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:19 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 17:47:43 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 04:11:48 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,16 @@ int Client::command_KICK(t_command &command)
 		send_message(":" + get_server_addr() + " 451 * KICK :You have not registered");
 		return (0);
 	}
-	if (!_is_operator)
-	{
-		send_message(":" + get_server_addr() + " 501 * :You are not an operator");
-		return (0);
-	}
 	if (g_server.get_channels().find(command.parameters[0]) != g_server.get_channels().end())
 		channel = g_server.get_channels()[command.parameters[0]];
 	else
 	{
 		send_message(":" + get_server_addr() + " 501 * :No channel named " + command.parameters[0]);
+		return (0);
+	}
+	if (!_is_operator && !channel->get_oper(_fd))
+	{
+		send_message(":" + get_server_addr() + " 501 * :You are not a channel operator");
 		return (0);
 	}
 	if (!channel->is_user(_fd))

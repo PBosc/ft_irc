@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MODE.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:25 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 22:58:45 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 04:25:56 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,19 +118,16 @@ void Client::handle_o_mode(t_command &command, bool sign, size_t &params)
 	if (!channel->is_user(_fd))
 	{
 		send_message(":" + get_server_addr() + " 442 * " + command.parameters[0] + " :You're not on that channel");
-		std::cout << "not on that channel" << std::endl;
 		return ;
 	}
 	if (!_is_operator && !channel->get_oper(_fd))
 	{
 		send_message(":" + get_server_addr() + " 482 * " + command.parameters[0] + " :You're not operator");
-		std::cout << "not operator" << std::endl;
 		return ;
 	}
 	if (command.parameters.size() <= params)
 	{
 		send_message(":" + get_server_addr() + " 461 * MODE :Not enough parameters");
-		std::cout << "not enough parameters" << std::endl;
 		return ;
 	}
 	int	fd;
@@ -145,6 +142,7 @@ void Client::handle_o_mode(t_command &command, bool sign, size_t &params)
 			return ;
 		}
 	}
+	send_message(":" + get_server_addr() + " 442 * " + command.parameters[0] + " MODE :User specified not in channel");
 }
 
 int Client::command_MODE(t_command &command)

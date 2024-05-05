@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   NICK.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:30 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 23:05:01 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 04:30:13 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ bool	erroneous_nick(std::string nick)
 	std::string specials = "[]|^_-{}";
 
 	if (nick.length() > 9)
-		return false;
+		return true;
 	for (std::string::iterator it = nick.begin(); it != nick.end(); it++)
 	{
 		if (!isalnum(*it) && specials.find(*it) == std::string::npos)
@@ -43,8 +43,8 @@ int Client::command_NICK(t_command &cmd)
 		return (0);
 	}
 	if (erroneous_nick(cmd.parameters[0])) {
-		send_message(":" + get_server_addr() + " 432 * " + cmd.parameters[0]
-			+ " :Erroneous nickname");
+		send_message(":" + get_server_addr() + " 433 * " + cmd.parameters[0]
+			+ " :Nickname is erroneous");
 		return (0);
 	}
 	if (is_already_in_use(cmd.parameters[0]) || cmd.parameters[0] == "bot") {
