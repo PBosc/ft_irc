@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:49:02 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/05 04:29:16 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/05 16:52:33 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,13 +222,20 @@ void Server::kick_user(int fd)
 		std::cerr << "Error: no such user" << std::endl;
 		return ;
 	}
-	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
+	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end();)
 	{
 		if (it->second->is_user(fd))
 		{
 			std::string reason("Disconnected");
 			it->second->part_user(fd, reason);
 		}
+		if (!it->second->get_users().size())
+		{
+			delete it->second;
+			_channels.erase(it++);
+		}
+		else
+			++it;
 	}
 	delete _clients[fd];
 	_clients[fd] = NULL;
@@ -264,6 +271,17 @@ bool Server::remove_ban_word(std::string &word) {
         }
     }
     return (false);
+}
+
+void Server::broadcast(std::string &message, int emitter) {
+    for (std::map<int, Client *>::iterator it = _clients.begin(); it != _clients.end(); it++) {
+        if (it->second->get_fd() != emitter) {
+            it->second->send_message(message);
+        }
+    }
+    if (g_server.get_bot_fd() != -1 && g_server.get_bot_fd() != emitter) {
+        g_server.get_clients()[g_server.get_bot_fd()]->send_message(message);
+    }
 }
 
 std::vector<std::string> &Server::get_ban_words(void) {

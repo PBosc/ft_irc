@@ -6,7 +6,7 @@
 /*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:28 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/04 19:04:08 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/05 16:55:25 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,9 @@ int Client::command_NAMES(t_command &command)
 			continue;
 		if (!first)
 			names.append(" ");
-		names.append("@" + client->get_nick());
+		if (channel->get_oper(client_fd))
+			names.append("@");
+		names.append(client->get_nick());
 		first = false;
 	}
 	send_message(":" + get_server_addr() + " 353 " + _nick + " = " + command.parameters[0] + " :" + names);

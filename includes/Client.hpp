@@ -10,7 +10,7 @@ class Client
 	int _id, _fd;
 	std::string _nick, _user, _name;
 	struct sockaddr_in	_socket;
-	bool _has_password, _has_nick, _has_Client, _is_identified, _is_operator;
+	bool _has_password, _has_nick, _has_Client, _is_identified, _is_operator, _is_invisible;
 	std::string _message;
 
   public:
@@ -37,11 +37,11 @@ class Client
 	int command_INVITE(t_command &command);
 	int command_unknown(t_command &command);
 
-	void handle_i_mode(t_command &command, bool sign);
-	void handle_t_mode(t_command &command, bool sign);
-	void handle_k_mode(t_command &command, bool sign, size_t &params);
-	void handle_o_mode(t_command &command, bool sign, size_t &params);
-	void handle_l_mode(t_command &command, bool sign, size_t &params);
+	void handle_i_mode(t_command &command, bool sign, Channel *channel);
+	void handle_t_mode(t_command &command, bool sign, Channel *channel);
+	void handle_k_mode(t_command &command, bool sign, size_t &params, Channel *channel);
+	void handle_o_mode(t_command &command, bool sign, size_t &params, Channel *channel);
+	void handle_l_mode(t_command &command, bool sign, size_t &params, Channel *channel);
 
 	bool can_execute(void) const;
 
@@ -57,6 +57,8 @@ class Client
 	std::string &get_message(void);
 	void set_operator(bool b);
 	void set_message(std::string &message);
+	bool is_invisible(void) const;
+	void set_invisible(bool b);
 };
 
 bool	is_already_in_use(std::string nick);

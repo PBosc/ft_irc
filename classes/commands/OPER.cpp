@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   OPER.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:35 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 06:53:17 by ybelatar         ###   ########.fr       */
+/*   Updated: 2024/05/05 16:55:18 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ int Client::command_OPER(t_command &cmd)
 		send_message(":" + get_server_addr() + " 464 * :Password incorrect");
 		return 0;
 	}
-	send_message(":" + get_server_addr() + " 381 " + cmd.parameters[0] + " :You are now an IRC operator");
+	std::string message(":" + get_server_addr() + " MODE " + _name + " +o :" + _nick + " is now an operator");
+	send_message(message);
 	_is_operator = true;
 	return 1;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:40:32 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/05 02:48:20 by pibosc           ###   ########.fr       */
+/*   Updated: 2024/05/05 16:24:22 by wouhliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ class Server
 	size_t remove_bot_response(std::string &trigger);
 	void set_bot_fd(int fd);
 	int get_bot_fd(void);
+	void broadcast(std::string &message, int emitter);
 
   private:
 	t_epoll _epoll;

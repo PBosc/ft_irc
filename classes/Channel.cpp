@@ -74,8 +74,6 @@ void Channel::part_user(int fd_user, const std::string &reason) {
 
             _fds_users.erase(it);
 			if (_fds_users.size() == 0) {
-				delete g_server.get_channels()[_name];
-				g_server.get_channels().erase(_name);
 				return ;
 			}
 			if (_fds_operators[fd_user] && op_count() == 1) {
@@ -108,7 +106,17 @@ void Channel::kick_user(int fd_to_kick) {
 	broadcast(message, fd_to_kick);
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {
         if (*it == fd_to_kick) {
+
             _fds_users.erase(it);
+			if (_fds_users.size() == 0) {
+				return ;
+			}
+			if (_fds_operators[fd_to_kick] && op_count() == 1) {
+				_fds_operators[_fds_users.at(0)] = true;
+				Client	*client = g_server.get_clients()[_fds_users.at(0)];
+				client->send_message(":" + client->get_server_addr() + " MODE " + _name + " +o :" + client->get_nick() + " is now an operator");
+				_fds_operators.erase(fd_to_kick);
+			}
             return;
         }
     }
@@ -193,7 +201,7 @@ std::string Channel::get_key(void) const {
 }
 
 unsigned int Channel::get_user_limit(void) const {
-    return _max_users;
+    return _limit;
 }
 
 bool Channel::get_invite_only(void) const {
@@ -225,8 +233,6 @@ bool Channel::get_oper(int fd)
 std::map<int, Client *> Channel::get_invited() const {
 	return _invited_users;
 }
-
-
 
 void Channel::broadcast(std::string &message, int emitter) {
     for (std::vector<int>::iterator it = _fds_users.begin(); it != _fds_users.end(); it++) {

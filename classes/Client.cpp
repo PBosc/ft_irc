@@ -14,6 +14,7 @@ Client::Client(int fd, int id, struct sockaddr_in socket)
 	_has_Client = false;
 	_is_identified = false;
 	_is_operator = false;
+	_is_invisible = false;
 	_message = "";
 	_socket = socket;
 }
@@ -32,6 +33,7 @@ Client::Client(const Client &obj)
 	_is_operator = obj._is_operator;
 	_message = obj._message;
 	_socket = obj._socket;
+	_is_invisible = obj._is_invisible;
 }
 
 Client &Client::operator=(const Client &rhs)
@@ -47,6 +49,7 @@ Client &Client::operator=(const Client &rhs)
 	_is_identified = rhs._is_identified;
 	_is_operator = rhs._is_operator;
 	_message = rhs._message;
+	_is_invisible = rhs._is_invisible;
 	_socket = rhs._socket;
 	return (*this);
 }
@@ -131,6 +134,16 @@ void Client::set_message(std::string &message)
 
 void Client::set_operator(bool b) {
 	_is_operator = b;
+}
+
+bool Client::is_invisible(void) const
+{
+	return (_is_invisible);
+}
+
+void Client::set_invisible(bool b)
+{
+	_is_invisible = b;
 }
 
 std::ostream &operator<<(std::ostream &os, const Client &client)
