@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MODE.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:25 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 22:49:47 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/06 00:38:24 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ int Client::command_MODE(t_command &command)
 	size_t	params;
 	bool	sign;
 	if (!can_execute()) {
-		send_message(":" + get_server_addr() + " 451 * KILL :You have not registered");
+		send_message(":" + get_server_addr() + " 451 * MODE :You have not registered");
 		return 1;
 	}
 	if (!command.parameters.size())

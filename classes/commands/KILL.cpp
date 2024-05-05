@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   KILL.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:22 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 22:09:38 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/06 00:29:24 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int Client::command_KILL(t_command &cmd)
 		return 1;
 	}
 	if (cmd.parameters.size() != 1) {
-		send_message(":" + get_server_addr() + " 501 * :Not enough parameters");
+		send_message(":" + get_server_addr() + " 461 * :Not enough parameters");
 		return 1;
 	}
 	if (!_is_operator) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 15:54:39 by wouhliss          #+#    #+#             */
-/*   Updated: 2024/05/05 23:19:35 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/06 00:33:11 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,8 @@ void	handle_message(int fd)
 								return ;
 						}
 					}
-					else if ((g_server.get_clients()[fd]->*g_server.get_commands()[cmd.command])(cmd))
-						return ;
+					else 
+						(g_server.get_clients()[fd]->*g_server.get_commands()[cmd.command])(cmd);
 				}
 				else
 					(g_server.get_clients()[fd]->*g_server.get_commands()["UNKNOWN"])(cmd);

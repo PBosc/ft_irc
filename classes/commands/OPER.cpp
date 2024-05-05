@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   OPER.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:35 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 16:55:18 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/06 00:39:17 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,11 @@ int Client::command_OPER(t_command &cmd)
 	if (_is_operator) {
 		send_message(":" + get_server_addr() + " 501 * :You are already an IRC operator");
 		return 0;
+	}
+	if (cmd.parameters.size() < 2)
+	{
+		send_message(":" + get_server_addr() + " 461 * OPER :Not enough parameters");
+		return (0);
 	}
 	if (!is_operator_valid(cmd.parameters[0])) {
 		send_message(":" + get_server_addr() + " 501 * :No such operator by that name");

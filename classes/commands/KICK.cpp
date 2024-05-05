@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   KICK.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:19 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 23:42:35 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/06 00:29:35 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,11 @@ int Client::command_KICK(t_command &command)
 	if (!_has_password || !_has_Client || !_has_nick)
 	{
 		send_message(":" + get_server_addr() + " 451 * KICK :You have not registered");
+		return (0);
+	}
+	if (command.parameters.size() < 2)
+	{
+		send_message(":" + get_server_addr() + " 501 * KICK :Not enough parameters");
 		return (0);
 	}
 	if (g_server.get_channels().find(command.parameters[0]) != g_server.get_channels().end())

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   INVITE.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybelatar <ybelatar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 04:29:13 by ybelatar          #+#    #+#             */
-/*   Updated: 2024/05/05 22:28:23 by wouhliss         ###   ########.fr       */
+/*   Updated: 2024/05/06 00:37:41 by ybelatar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,13 @@
 int Client::command_INVITE(t_command &cmd)
 {
 	if (!_has_password || !_has_Client || !_has_nick) {
-		send_message(":" + get_server_addr() + " 451 * KILL :You have not registered");
+		send_message(":" + get_server_addr() + " 451 * INVITE :You have not registered");
 		return 1;
+	}
+	if (cmd.parameters.size() < 2)
+	{
+		send_message(":" + get_server_addr() + " 461 * INVITE :Not enough parameters");
+		return (0);
 	}
 	Client *user = g_server.find_client_by_nick(cmd.parameters[0]);
 	if (!user) {
