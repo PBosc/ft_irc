@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: wouhliss <wouhliss@student.42.fr>          +#+  +:+       +#+         #
+#    By: pibosc <pibosc@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/13 22:58:31 by wouhliss          #+#    #+#              #
-#    Updated: 2024/05/05 20:42:59 by wouhliss         ###   ########.fr        #
+#    Updated: 2024/05/06 20:10:57 by pibosc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -90,7 +90,7 @@ clean:
 	${RM} ${RM_FLAGS} ${OBJSDIR}
 
 fclean: clean
-	${RM} ${RM_FLAGS} ${NAME}
+	${RM} ${RM_FLAGS} ${NAME} ${BOT_NAME}
 
 re: fclean
 	make all
